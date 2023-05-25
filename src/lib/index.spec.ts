@@ -20,13 +20,19 @@ test('a graph with assigned weights', (t) => {
   graph.addEdge('D', 'F', 1);
   graph.addEdge('E', 'F', 1);
 
-  t.deepEqual(graph.calculateShortestPath('A', 'E'), ['A', 'C', 'D', 'F', 'E']);
-  t.deepEqual(graph.calculateShortestPathAsLinkedListResult('A', 'E'), [
-    { source: 'A', target: 'C' },
-    { source: 'C', target: 'D' },
-    { source: 'D', target: 'F' },
-    { source: 'F', target: 'E' },
-  ]);
+  t.deepEqual(graph.calculateShortestPath('A', 'E'), {
+    finalPath: ['A', 'C', 'D', 'F', 'E'],
+    totalWeight: 6
+  });
+  t.deepEqual(graph.calculateShortestPathAsLinkedListResult('A', 'E'), {
+    finalPath: [
+      { source: 'A', target: 'C' },
+      { source: 'C', target: 'D' },
+      { source: 'D', target: 'F' },
+      { source: 'F', target: 'E' },
+    ],
+    totalWeight: 6
+  });
 });
 
 test('basic test with same weight', (t) => {
@@ -47,11 +53,14 @@ test('basic test with same weight', (t) => {
   graph.addEdge('D', 'F');
   graph.addEdge('E', 'F');
 
-  t.deepEqual(graph.calculateShortestPath('A', 'E'), ['A', 'B', 'E']);
-  t.deepEqual(graph.calculateShortestPathAsLinkedListResult('A', 'E'), [
-    { source: 'A', target: 'B' },
-    { source: 'B', target: 'E' },
-  ]);
+  t.deepEqual(graph.calculateShortestPath('A', 'E'), { finalPath: ['A', 'B', 'E'], totalWeight: 2 });
+  t.deepEqual(graph.calculateShortestPathAsLinkedListResult('A', 'E'), {
+    finalPath: [
+      { source: 'A', target: 'B' },
+      { source: 'B', target: 'E' },
+    ],
+    totalWeight: 2
+  });
 });
 
 test('no possible traversal should have an empty result', (t) => {
@@ -76,8 +85,8 @@ test('no possible traversal should have an empty result', (t) => {
   // do not any connection to Z
 
   // ensure that there is an empty array.
-  t.deepEqual(graph.calculateShortestPath('Z', 'A'), []);
-  t.deepEqual(graph.calculateShortestPathAsLinkedListResult('Z', 'A'), []);
+  t.deepEqual(graph.calculateShortestPath('Z', 'A'), { finalPath: [], totalWeight: 0 });
+  t.deepEqual(graph.calculateShortestPathAsLinkedListResult('Z', 'A'), { finalPath: [], totalWeight: 0 });
 });
 
 test('single node hop should only have 2 primitive array elements and one linked list result', (t) => {
@@ -89,8 +98,11 @@ test('single node hop should only have 2 primitive array elements and one linked
   // do not any connection to Z
 
   // ensure that there is an empty array.
-  t.deepEqual(graph.calculateShortestPath('A', 'B'), ['A', 'B']);
-  t.deepEqual(graph.calculateShortestPathAsLinkedListResult('A', 'B'), [
-    { source: 'A', target: 'B' },
-  ]);
+  t.deepEqual(graph.calculateShortestPath('A', 'B'), { finalPath: ['A', 'B'], totalWeight: 1 });
+  t.deepEqual(graph.calculateShortestPathAsLinkedListResult('A', 'B'), {
+    finalPath: [
+      { source: 'A', target: 'B' },
+    ],
+    totalWeight: 1
+  });
 });

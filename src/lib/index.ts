@@ -159,10 +159,16 @@ export class DijkstraCalculator {
 
     if (finalPath.length <= 1) {
       // if the final path has only 1 or fewer elements, there was no traversal that was possible.
-      return [];
+      return {
+        finalPath: [],
+        totalWeight: 0
+      };
     }
 
-    return finalPath;
+    return {
+      finalPath,
+      totalWeight: distances[finish]
+    };
   }
 
   /**
@@ -174,8 +180,9 @@ export class DijkstraCalculator {
   calculateShortestPathAsLinkedListResult(
     start: NodeId,
     finish: NodeId
-  ): LinkedListItem[] {
-    const array: string[] = this.calculateShortestPath(start, finish);
+  ): { finalPath: LinkedListItem[], totalWeight: number } {
+    const result = this.calculateShortestPath(start, finish);
+    const array: string[] = result.finalPath
     const linkedListItems: LinkedListItem[] = [];
     for (let i = 0; i < array.length; i++) {
       if (i == array.length - 1) {
@@ -186,6 +193,9 @@ export class DijkstraCalculator {
         target: array[i + 1],
       });
     }
-    return linkedListItems;
+    return {
+      finalPath: linkedListItems,
+      totalWeight: result.totalWeight
+    };
   }
 }

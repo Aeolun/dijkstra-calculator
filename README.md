@@ -2,6 +2,8 @@
 
 # A Typescript implementation of Dijkstra's shortest path algorithm
 
+> @aeolun: This is mildly modified from the original to return the final weight for a route
+
 - **GitHub URL**: https://github.com/getditto/dijkstra-calculator
 - **TypeDoc Link**: https://getditto.github.io/dijkstra-calculator
 - Built with [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](http://www.typescriptlang.org/)
