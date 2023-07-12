@@ -112,7 +112,7 @@ export class DijkstraCalculator {
   };
   vertexProperties: { [key: NodeId]: VertexProperties };
 
-  constructor() {
+  constructor(private isDebugging = false) {
     this.adjacencyList = {};
     this.vertexProperties = {};
   }
@@ -135,6 +135,10 @@ export class DijkstraCalculator {
     this.adjacencyList[vertex2].push({ id: vertex1, properties });
   }
 
+  debug(...args: any[]) {
+    if (this.isDebugging) console.log(...args);
+  }
+
   /**
    * Given the provided weights of each edge
    * @param start The starting {@link NodeId} to begin traversal
@@ -146,7 +150,7 @@ export class DijkstraCalculator {
     finish: NodeId,
     properties: Omit<PathProperties, 'priority'> = {}
   ) {
-    console.log("Start running Dijkstra's algorithm");
+    this.debug("Start running Dijkstra's algorithm");
     const nodes = new PriorityQueue();
     const distances: { [key: NodeId]: PathProperties } = {};
     const previous: { [key: NodeId]: NodeId } = {};
@@ -205,7 +209,7 @@ export class DijkstraCalculator {
             }
           }
           if (nextVertexProperties && nextVertexProperties.recover) {
-            console.log('recover found');
+            this.debug('recover found');
             for (const supply in nextVertexProperties.recover) {
               const smallestSupplies = distances[smallest].supplies;
               if (
@@ -225,7 +229,7 @@ export class DijkstraCalculator {
             supplies: newSupplies,
             priority: candidate,
           };
-          console.info(
+          this.debug(
             'On ',
             smallest,
             ' traveling to ',
@@ -235,7 +239,7 @@ export class DijkstraCalculator {
           );
           const nextNeighbor = nextNode.id;
           if (candidate < distances[nextNeighbor].priority) {
-            console.log(
+            this.debug(
               'new smallest',
               candidate,
               'lower than',
@@ -279,7 +283,7 @@ export class DijkstraCalculator {
       };
     }
 
-    console.log('final distance', distances[finish]);
+    this.debug('final distance', distances[finish]);
 
     const linkedListItems: LinkedListItem[] = [];
     for (let i = 0; i < finalPath.length; i++) {
