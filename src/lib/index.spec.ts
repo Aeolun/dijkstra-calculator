@@ -21,23 +21,7 @@ test('a graph with assigned weights', (t) => {
   graph.addEdge('E', 'F', { weight: 1 });
 
   t.deepEqual(graph.calculateShortestPath('A', 'E'), {
-    finalPath: [
-      {
-        vertexId: 'A',
-      },
-      {
-        vertexId: 'C',
-      },
-      {
-        vertexId: 'D',
-      },
-      {
-        vertexId: 'F',
-      },
-      {
-        vertexId: 'E',
-      },
-    ],
+    finalPath: ['A', 'C', 'D', 'F', 'E'],
     pathProperties: { priority: 6, supplies: {} },
   });
   t.deepEqual(graph.calculateShortestPathAsLinkedListResult('A', 'E'), {
@@ -70,17 +54,7 @@ test('basic test with same weight', (t) => {
   graph.addEdge('E', 'F');
 
   t.deepEqual(graph.calculateShortestPath('A', 'E'), {
-    finalPath: [
-      {
-        vertexId: 'A',
-      },
-      {
-        vertexId: 'B',
-      },
-      {
-        vertexId: 'E',
-      },
-    ],
+    finalPath: ['A', 'B', 'E'],
     pathProperties: { priority: 2, supplies: {} },
   });
   t.deepEqual(graph.calculateShortestPathAsLinkedListResult('A', 'E'), {
@@ -112,22 +86,12 @@ test('basic test with multiple weights', (t) => {
   graph.addEdge('E', 'F', { weight: 1, consumes: { fuel: 1 } });
 
   t.deepEqual(
-    graph.calculateShortestPath('A', 'E', { supplies: { fuel: 3 } }),
+    graph.calculateShortestPath('A', 'E', {
+      supplies: { fuel: 3 },
+      maxSupplies: { fuel: 3 },
+    }),
     {
-      finalPath: [
-        {
-          vertexId: 'A',
-        },
-        {
-          vertexId: 'B',
-        },
-        {
-          vertexId: 'D',
-        },
-        {
-          vertexId: 'E',
-        },
-      ],
+      finalPath: ['A', 'B', 'D', 'E'],
       pathProperties: {
         priority: 3,
         supplies: {
@@ -139,6 +103,7 @@ test('basic test with multiple weights', (t) => {
   t.deepEqual(
     graph.calculateShortestPathAsLinkedListResult('A', 'E', {
       supplies: { fuel: 3 },
+      maxSupplies: { fuel: 3 },
     }),
     {
       finalPath: [
@@ -175,25 +140,12 @@ test('complex test with refueling', (t) => {
   graph.addEdge('E', 'F', { id: 'warp', weight: 1, consumes: { fuel: 1 } });
 
   t.deepEqual(
-    graph.calculateShortestPath('A', 'E', { supplies: { fuel: 2 } }),
+    graph.calculateShortestPath('A', 'E', {
+      supplies: { fuel: 2 },
+      maxSupplies: { fuel: 2 },
+    }),
     {
-      finalPath: [
-        {
-          vertexId: 'A',
-        },
-        {
-          vertexId: 'C',
-          edgeId: 'warp',
-        },
-        {
-          vertexId: 'F',
-          edgeId: 'warp',
-        },
-        {
-          vertexId: 'E',
-          edgeId: 'warp',
-        },
-      ],
+      finalPath: ['A', 'C', 'F', 'E'],
       pathProperties: {
         priority: 3,
         supplies: {
@@ -205,12 +157,34 @@ test('complex test with refueling', (t) => {
   t.deepEqual(
     graph.calculateShortestPathAsLinkedListResult('A', 'E', {
       supplies: { fuel: 2 },
+      maxSupplies: { fuel: 2 },
     }),
     {
       finalPath: [
-        { source: 'A', target: 'C', edgeId: 'warp' },
-        { source: 'C', target: 'F', edgeId: 'warp' },
-        { source: 'F', target: 'E', edgeId: 'warp' },
+        {
+          source: 'A',
+          target: 'C',
+          edge: 'warp',
+          weight: 1,
+          consumes: { fuel: 1 },
+          recover: { fuel: 1 },
+        },
+        {
+          source: 'C',
+          target: 'F',
+          edge: 'warp',
+          weight: 1,
+          consumes: { fuel: 1 },
+          recover: {},
+        },
+        {
+          source: 'F',
+          target: 'E',
+          edge: 'warp',
+          weight: 1,
+          consumes: { fuel: 1 },
+          recover: {},
+        },
       ],
       pathProperties: {
         priority: 3,
@@ -244,25 +218,12 @@ test('complex test with multiple edge options', (t) => {
   graph.addEdge('E', 'F', { id: 'warp', weight: 2, consumes: { fuel: 1 } });
 
   t.deepEqual(
-    graph.calculateShortestPath('A', 'E', { supplies: { fuel: 10 } }),
+    graph.calculateShortestPath('A', 'E', {
+      supplies: { fuel: 10 },
+      maxSupplies: { fuel: 10 },
+    }),
     {
-      finalPath: [
-        {
-          vertexId: 'A',
-        },
-        {
-          vertexId: 'B',
-          edgeId: 'burn',
-        },
-        {
-          vertexId: 'D',
-          edgeId: 'burn',
-        },
-        {
-          vertexId: 'E',
-          edgeId: 'warp',
-        },
-      ],
+      finalPath: ['A', 'B', 'D', 'E'],
       pathProperties: {
         priority: 4,
         supplies: {
@@ -274,12 +235,34 @@ test('complex test with multiple edge options', (t) => {
   t.deepEqual(
     graph.calculateShortestPathAsLinkedListResult('A', 'E', {
       supplies: { fuel: 10 },
+      maxSupplies: { fuel: 10 },
     }),
     {
       finalPath: [
-        { source: 'A', target: 'B', edgeId: 'burn' },
-        { source: 'B', target: 'D', edgeId: 'burn' },
-        { source: 'D', target: 'E', edgeId: 'warp' },
+        {
+          source: 'A',
+          target: 'B',
+          edge: 'burn',
+          weight: 1,
+          consumes: { fuel: 2 },
+          recover: {},
+        },
+        {
+          source: 'B',
+          target: 'D',
+          edge: 'burn',
+          weight: 1,
+          consumes: { fuel: 2 },
+          recover: {},
+        },
+        {
+          source: 'D',
+          target: 'E',
+          edge: 'warp',
+          weight: 2,
+          consumes: { fuel: 1 },
+          recover: {},
+        },
       ],
       pathProperties: {
         priority: 4,
@@ -333,14 +316,7 @@ test('single node hop should only have 2 primitive array elements and one linked
 
   // ensure that there is an empty array.
   t.deepEqual(graph.calculateShortestPath('A', 'B'), {
-    finalPath: [
-      {
-        vertexId: 'A',
-      },
-      {
-        vertexId: 'B',
-      },
-    ],
+    finalPath: ['A', 'B'],
     pathProperties: { priority: 1, supplies: {} },
   });
   t.deepEqual(graph.calculateShortestPathAsLinkedListResult('A', 'B'), {

@@ -79,7 +79,10 @@ class PriorityQueue {
 export interface LinkedListItem {
   source: NodeId;
   target: NodeId;
-  edgeId?: NodeId;
+  edge?: NodeId;
+  consumes?: Record<string, number>;
+  recover?: Record<string, number>;
+  weight?: number;
 }
 
 export interface VertexProperties {
@@ -90,17 +93,18 @@ export interface EdgeProperties {
   id?: string;
   weight: number;
   consumes?: Record<string, number>;
+  recover?: Record<string, number>;
 }
 
 export interface PathProperties {
   priority: number;
   supplies?: Record<string, number>;
+  maxSupplies?: Record<string, number>;
 }
 
-export interface PathNode {
+export type PathNode = {
   vertexId: NodeId;
-  edgeId?: NodeId;
-}
+} & Partial<EdgeProperties>;
 
 export class DijkstraCalculator {
   adjacencyList: {
@@ -137,7 +141,7 @@ export class DijkstraCalculator {
    * @param finish The ending {@link NodeId} to complete traversal
    * @returns an {@type Array<string>} showing how to traverse the nodes. If traversal is impossible then it will return an empty array
    */
-  calculateShortestPath(
+  calculateShortestPathAsLinkedListResult(
     start: NodeId,
     finish: NodeId,
     properties: Omit<PathProperties, 'priority'> = {}
@@ -146,7 +150,7 @@ export class DijkstraCalculator {
     const nodes = new PriorityQueue();
     const distances: { [key: NodeId]: PathProperties } = {};
     const previous: { [key: NodeId]: NodeId } = {};
-    const previousEdgeId: { [key: NodeId]: string | undefined } = {};
+    const previousEdgeId: { [key: NodeId]: EdgeProperties | undefined } = {};
     const path: PathNode[] = []; //to return at end
     let smallestNode: Node | null = null;
     let smallest: string | null = null;
@@ -171,7 +175,7 @@ export class DijkstraCalculator {
         while (smallest && previous[smallest]) {
           path.push(
             previousEdgeId[smallest]
-              ? { vertexId: smallest, edgeId: previousEdgeId[smallest] }
+              ? { vertexId: smallest, ...previousEdgeId[smallest] }
               : { vertexId: smallest }
           );
           smallest = previous[smallest];
@@ -187,6 +191,7 @@ export class DijkstraCalculator {
           let candidate =
             distances[smallest].priority + nextNode.properties.weight;
           const newSupplies = { ...distances[smallest].supplies };
+          let recoverHere: Record<string, number> = {};
           if (nextNode.properties.consumes) {
             for (const supply in nextNode.properties.consumes) {
               if (newSupplies[supply]) {
@@ -202,7 +207,18 @@ export class DijkstraCalculator {
           if (nextVertexProperties && nextVertexProperties.recover) {
             console.log('recover found');
             for (const supply in nextVertexProperties.recover) {
-              newSupplies[supply] = properties.supplies?.[supply] ?? 0;
+              const smallestSupplies = distances[smallest].supplies;
+              if (
+                properties.maxSupplies &&
+                properties.maxSupplies[supply] &&
+                smallestSupplies &&
+                smallestSupplies[supply]
+              ) {
+                const recoverAmount =
+                  properties.maxSupplies[supply] - newSupplies[supply];
+                recoverHere[supply] = recoverAmount;
+              }
+              newSupplies[supply] = properties.maxSupplies?.[supply] ?? 0;
             }
           }
           const newProperties: PathProperties = {
@@ -223,13 +239,20 @@ export class DijkstraCalculator {
               'new smallest',
               candidate,
               'lower than',
-              distances[nextNeighbor]
+              distances[nextNeighbor].priority,
+              'for',
+              nextNeighbor,
+              'set recover',
+              recoverHere
             );
             //updating new smallest distance to neighbor
             distances[nextNeighbor] = newProperties;
             //updating previous - How we got to neighbor
             previous[nextNeighbor] = smallest;
-            previousEdgeId[nextNeighbor] = nextNode.properties.id;
+            previousEdgeId[nextNeighbor] = {
+              ...nextNode.properties,
+              recover: recoverHere,
+            };
             //enqueue in priority queue with new priority
             nodes.enqueue(nextNeighbor, newProperties);
           }
@@ -258,8 +281,29 @@ export class DijkstraCalculator {
 
     console.log('final distance', distances[finish]);
 
+    const linkedListItems: LinkedListItem[] = [];
+    for (let i = 0; i < finalPath.length; i++) {
+      if (i == finalPath.length - 1) {
+        break;
+      }
+      linkedListItems.push(
+        finalPath[i + 1].id
+          ? {
+              source: finalPath[i].vertexId,
+              target: finalPath[i + 1].vertexId,
+              edge: finalPath[i + 1].id,
+              consumes: finalPath[i + 1].consumes,
+              recover: finalPath[i + 1].recover,
+              weight: finalPath[i + 1].weight,
+            }
+          : {
+              source: finalPath[i].vertexId,
+              target: finalPath[i + 1].vertexId,
+            }
+      );
+    }
     return {
-      finalPath,
+      finalPath: linkedListItems,
       pathProperties: distances[finish],
     };
   }
@@ -270,33 +314,27 @@ export class DijkstraCalculator {
    * @param finish The ending {@link NodeId} to complete traversal
    * @returns Returns an array where each element is a {@link LinkedListItem}
    */
-  calculateShortestPathAsLinkedListResult(
+  calculateShortestPath(
     start: NodeId,
     finish: NodeId,
     properties: Omit<PathProperties, 'priority'> = {}
-  ): { finalPath: LinkedListItem[]; pathProperties: PathProperties } {
-    const result = this.calculateShortestPath(start, finish, properties);
-    const array: PathNode[] = result.finalPath;
-    const linkedListItems: LinkedListItem[] = [];
-    for (let i = 0; i < array.length; i++) {
-      if (i == array.length - 1) {
-        break;
-      }
-      linkedListItems.push(
-        array[i + 1].edgeId
-          ? {
-              source: array[i].vertexId,
-              target: array[i + 1].vertexId,
-              edgeId: array[i + 1].edgeId,
-            }
-          : {
-              source: array[i].vertexId,
-              target: array[i + 1].vertexId,
-            }
-      );
+  ): { finalPath: string[]; pathProperties: PathProperties } {
+    const result = this.calculateShortestPathAsLinkedListResult(
+      start,
+      finish,
+      properties
+    );
+
+    let finalPath: string[] = [];
+    if (result.finalPath.length > 0) {
+      result.finalPath.forEach((item, index) => {
+        if (index === 0) finalPath.push(item.source);
+        finalPath.push(item.target);
+      });
     }
+
     return {
-      finalPath: linkedListItems,
+      finalPath,
       pathProperties: result.pathProperties,
     };
   }
