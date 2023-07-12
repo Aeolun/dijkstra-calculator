@@ -4,7 +4,7 @@
 export type NodeId = string;
 export interface Node {
   id: NodeId;
-  priority: number;
+  properties: PathProperties;
 }
 class PriorityQueue {
   values: Node[];
@@ -13,8 +13,8 @@ class PriorityQueue {
     this.values = [];
   }
 
-  enqueue(id: NodeId, priority: number) {
-    const newNode: Node = { id, priority };
+  enqueue(id: NodeId, properties: PathProperties) {
+    const newNode: Node = { id, properties };
     this.values.push(newNode);
     this.bubbleUp();
   }
@@ -25,7 +25,7 @@ class PriorityQueue {
     while (idx > 0) {
       const parentIdx = Math.floor((idx - 1) / 2);
       const parent = this.values[parentIdx];
-      if (element.priority >= parent.priority) break;
+      if (element.properties.priority >= parent.properties.priority) break;
       this.values[parentIdx] = element;
       this.values[idx] = parent;
       idx = parentIdx;
@@ -47,22 +47,23 @@ class PriorityQueue {
     while (true) {
       const leftChildIdx = 2 * idx + 1;
       const rightChildIdx = 2 * idx + 2;
-      let leftChild, rightChild;
+      let leftChild: Node | undefined, rightChild: Node | undefined;
       let swap = null;
 
       if (leftChildIdx < length) {
         leftChild = this.values[leftChildIdx];
-        if (leftChild.priority < element.priority) {
+        if (leftChild.properties.priority < element.properties.priority) {
           swap = leftChildIdx;
         }
       }
       if (rightChildIdx < length) {
         rightChild = this.values[rightChildIdx];
         if (
-          (swap === null && rightChild.priority < element.priority) ||
+          (swap === null &&
+            rightChild.properties.priority < element.properties.priority) ||
           (swap !== null &&
             leftChild &&
-            rightChild.priority < leftChild.priority)
+            rightChild.properties.priority < leftChild.properties.priority)
         ) {
           swap = rightChildIdx;
         }
@@ -78,22 +79,56 @@ class PriorityQueue {
 export interface LinkedListItem {
   source: NodeId;
   target: NodeId;
+  edgeId?: NodeId;
+}
+
+export interface VertexProperties {
+  recover?: Record<string, boolean>;
+}
+
+export interface EdgeProperties {
+  id?: string;
+  weight: number;
+  consumes?: Record<string, number>;
+}
+
+export interface PathProperties {
+  priority: number;
+  supplies?: Record<string, number>;
+}
+
+export interface PathNode {
+  vertexId: NodeId;
+  edgeId?: NodeId;
 }
 
 export class DijkstraCalculator {
-  adjacencyList: { [key: NodeId]: { id: NodeId; weight: number }[] };
+  adjacencyList: {
+    [key: NodeId]: { id: NodeId; properties: EdgeProperties }[];
+  };
+  vertexProperties: { [key: NodeId]: VertexProperties };
 
   constructor() {
     this.adjacencyList = {};
+    this.vertexProperties = {};
   }
 
-  addVertex(vertex: NodeId) {
-    if (!this.adjacencyList[vertex]) this.adjacencyList[vertex] = [];
+  addVertex(vertex: NodeId, properties?: VertexProperties) {
+    if (!this.adjacencyList[vertex]) {
+      this.adjacencyList[vertex] = [];
+      if (properties) {
+        this.vertexProperties[vertex] = properties;
+      }
+    }
   }
 
-  addEdge(vertex1: NodeId, vertex2: NodeId, weight = 1) {
-    this.adjacencyList[vertex1].push({ id: vertex2, weight });
-    this.adjacencyList[vertex2].push({ id: vertex1, weight });
+  addEdge(
+    vertex1: NodeId,
+    vertex2: NodeId,
+    properties: EdgeProperties = { weight: 1 }
+  ) {
+    this.adjacencyList[vertex1].push({ id: vertex2, properties });
+    this.adjacencyList[vertex2].push({ id: vertex1, properties });
   }
 
   /**
@@ -102,72 +137,130 @@ export class DijkstraCalculator {
    * @param finish The ending {@link NodeId} to complete traversal
    * @returns an {@type Array<string>} showing how to traverse the nodes. If traversal is impossible then it will return an empty array
    */
-  calculateShortestPath(start: NodeId, finish: NodeId) {
+  calculateShortestPath(
+    start: NodeId,
+    finish: NodeId,
+    properties: Omit<PathProperties, 'priority'> = {}
+  ) {
+    console.log("Start running Dijkstra's algorithm");
     const nodes = new PriorityQueue();
-    const distances: { [key: NodeId]: number } = {};
+    const distances: { [key: NodeId]: PathProperties } = {};
     const previous: { [key: NodeId]: NodeId } = {};
-    const path = []; //to return at end
+    const previousEdgeId: { [key: NodeId]: string | undefined } = {};
+    const path: PathNode[] = []; //to return at end
+    let smallestNode: Node | null = null;
     let smallest: string | null = null;
     //build up initial state
     for (const vertex in this.adjacencyList) {
       if (vertex === start) {
-        distances[vertex] = 0;
-        nodes.enqueue(vertex, 0);
+        distances[vertex] = { ...properties, priority: 0 };
+        nodes.enqueue(vertex, { ...properties, priority: 0 });
       } else {
-        distances[vertex] = Infinity;
-        nodes.enqueue(vertex, Infinity);
+        distances[vertex] = { ...properties, priority: Infinity };
+        nodes.enqueue(vertex, { ...properties, priority: Infinity });
       }
       delete previous[vertex];
     }
     // as long as there is something to visit
     while (nodes.values.length) {
-      smallest = nodes.dequeue().id;
+      smallestNode = nodes.dequeue();
+      smallest = smallestNode.id;
       if (smallest === finish) {
         //WE ARE DONE
         //BUILD UP PATH TO RETURN AT END
         while (smallest && previous[smallest]) {
-          path.push(smallest);
+          path.push(
+            previousEdgeId[smallest]
+              ? { vertexId: smallest, edgeId: previousEdgeId[smallest] }
+              : { vertexId: smallest }
+          );
           smallest = previous[smallest];
         }
         break;
       }
-      if (smallest || distances[smallest] !== Infinity) {
+      if (smallest || distances[smallest].priority !== Infinity) {
         for (const neighbor in this.adjacencyList[smallest]) {
           //find neighboring node
           const nextNode = this.adjacencyList[smallest][neighbor];
+          const nextVertexProperties = this.vertexProperties[nextNode.id];
           //calculate new distance to neighboring node
-          const candidate = distances[smallest] + nextNode.weight;
+          let candidate =
+            distances[smallest].priority + nextNode.properties.weight;
+          const newSupplies = { ...distances[smallest].supplies };
+          if (nextNode.properties.consumes) {
+            for (const supply in nextNode.properties.consumes) {
+              if (newSupplies[supply]) {
+                newSupplies[supply] -= nextNode.properties.consumes[supply];
+              } else {
+                newSupplies[supply] = -nextNode.properties.consumes[supply];
+              }
+              if (newSupplies[supply] < 0) {
+                candidate += 1000000000;
+              }
+            }
+          }
+          if (nextVertexProperties && nextVertexProperties.recover) {
+            console.log('recover found');
+            for (const supply in nextVertexProperties.recover) {
+              newSupplies[supply] = properties.supplies?.[supply] ?? 0;
+            }
+          }
+          const newProperties: PathProperties = {
+            supplies: newSupplies,
+            priority: candidate,
+          };
+          console.info(
+            'On ',
+            smallest,
+            ' traveling to ',
+            nextNode.id,
+            ' state at end of trip ',
+            newProperties
+          );
           const nextNeighbor = nextNode.id;
-          if (candidate < distances[nextNeighbor]) {
+          if (candidate < distances[nextNeighbor].priority) {
+            console.log(
+              'new smallest',
+              candidate,
+              'lower than',
+              distances[nextNeighbor]
+            );
             //updating new smallest distance to neighbor
-            distances[nextNeighbor] = candidate;
+            distances[nextNeighbor] = newProperties;
             //updating previous - How we got to neighbor
             previous[nextNeighbor] = smallest;
+            previousEdgeId[nextNeighbor] = nextNode.properties.id;
             //enqueue in priority queue with new priority
-            nodes.enqueue(nextNeighbor, candidate);
+            nodes.enqueue(nextNeighbor, newProperties);
           }
         }
       }
     }
 
-    let finalPath: string[] = [];
+    let finalPath: PathNode[] = [];
     if (!smallest) {
       finalPath = path.reverse();
     } else {
-      finalPath = path.concat(smallest).reverse();
+      finalPath = path
+        .concat({
+          vertexId: smallest,
+        })
+        .reverse();
     }
 
     if (finalPath.length <= 1) {
       // if the final path has only 1 or fewer elements, there was no traversal that was possible.
       return {
         finalPath: [],
-        totalWeight: 0
+        pathProperties: { priority: 0 },
       };
     }
 
+    console.log('final distance', distances[finish]);
+
     return {
       finalPath,
-      totalWeight: distances[finish]
+      pathProperties: distances[finish],
     };
   }
 
@@ -179,23 +272,32 @@ export class DijkstraCalculator {
    */
   calculateShortestPathAsLinkedListResult(
     start: NodeId,
-    finish: NodeId
-  ): { finalPath: LinkedListItem[], totalWeight: number } {
-    const result = this.calculateShortestPath(start, finish);
-    const array: string[] = result.finalPath
+    finish: NodeId,
+    properties: Omit<PathProperties, 'priority'> = {}
+  ): { finalPath: LinkedListItem[]; pathProperties: PathProperties } {
+    const result = this.calculateShortestPath(start, finish, properties);
+    const array: PathNode[] = result.finalPath;
     const linkedListItems: LinkedListItem[] = [];
     for (let i = 0; i < array.length; i++) {
       if (i == array.length - 1) {
         break;
       }
-      linkedListItems.push({
-        source: array[i],
-        target: array[i + 1],
-      });
+      linkedListItems.push(
+        array[i + 1].edgeId
+          ? {
+              source: array[i].vertexId,
+              target: array[i + 1].vertexId,
+              edgeId: array[i + 1].edgeId,
+            }
+          : {
+              source: array[i].vertexId,
+              target: array[i + 1].vertexId,
+            }
+      );
     }
     return {
       finalPath: linkedListItems,
-      totalWeight: result.totalWeight
+      pathProperties: result.pathProperties,
     };
   }
 }
