@@ -102,6 +102,10 @@ export interface PathProperties {
   maxSupplies?: Record<string, number>;
 }
 
+export type PathReturnProperties = PathProperties & {
+  timeTaken: number;
+};
+
 export type PathNode = {
   vertexId: NodeId;
 } & Partial<EdgeProperties>;
@@ -149,8 +153,9 @@ export class DijkstraCalculator {
     start: NodeId,
     finish: NodeId,
     properties: Omit<PathProperties, 'priority'> = {}
-  ) {
+  ): { finalPath: LinkedListItem[]; pathProperties: PathReturnProperties } {
     this.debug("Start running Dijkstra's algorithm");
+    const startTime = Date.now();
     const nodes = new PriorityQueue();
     const distances: { [key: NodeId]: PathProperties } = {};
     const previous: { [key: NodeId]: NodeId } = {};
@@ -279,7 +284,7 @@ export class DijkstraCalculator {
       // if the final path has only 1 or fewer elements, there was no traversal that was possible.
       return {
         finalPath: [],
-        pathProperties: { priority: 0 },
+        pathProperties: { priority: 0, timeTaken: Date.now() - startTime },
       };
     }
 
@@ -308,7 +313,10 @@ export class DijkstraCalculator {
     }
     return {
       finalPath: linkedListItems,
-      pathProperties: distances[finish],
+      pathProperties: {
+        ...distances[finish],
+        timeTaken: Date.now() - startTime,
+      },
     };
   }
 
@@ -322,7 +330,7 @@ export class DijkstraCalculator {
     start: NodeId,
     finish: NodeId,
     properties: Omit<PathProperties, 'priority'> = {}
-  ): { finalPath: string[]; pathProperties: PathProperties } {
+  ): { finalPath: string[]; pathProperties: PathReturnProperties } {
     const result = this.calculateShortestPathAsLinkedListResult(
       start,
       finish,

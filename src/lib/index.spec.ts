@@ -22,7 +22,7 @@ test('a graph with assigned weights', (t) => {
 
   t.deepEqual(graph.calculateShortestPath('A', 'E'), {
     finalPath: ['A', 'C', 'D', 'F', 'E'],
-    pathProperties: { priority: 6, supplies: {} },
+    pathProperties: { priority: 6, supplies: {}, timeTaken: 0 },
   });
   t.deepEqual(graph.calculateShortestPathAsLinkedListResult('A', 'E'), {
     finalPath: [
@@ -31,7 +31,7 @@ test('a graph with assigned weights', (t) => {
       { source: 'D', target: 'F' },
       { source: 'F', target: 'E' },
     ],
-    pathProperties: { priority: 6, supplies: {} },
+    pathProperties: { priority: 6, supplies: {}, timeTaken: 0 },
   });
 });
 
@@ -55,14 +55,14 @@ test('basic test with same weight', (t) => {
 
   t.deepEqual(graph.calculateShortestPath('A', 'E'), {
     finalPath: ['A', 'B', 'E'],
-    pathProperties: { priority: 2, supplies: {} },
+    pathProperties: { priority: 2, supplies: {}, timeTaken: 0 },
   });
   t.deepEqual(graph.calculateShortestPathAsLinkedListResult('A', 'E'), {
     finalPath: [
       { source: 'A', target: 'B' },
       { source: 'B', target: 'E' },
     ],
-    pathProperties: { priority: 2, supplies: {} },
+    pathProperties: { priority: 2, supplies: {}, timeTaken: 0 },
   });
 });
 
@@ -97,6 +97,7 @@ test('basic test with multiple weights', (t) => {
         supplies: {
           fuel: 0,
         },
+        timeTaken: 0,
       },
     }
   );
@@ -116,6 +117,7 @@ test('basic test with multiple weights', (t) => {
         supplies: {
           fuel: 0,
         },
+        timeTaken: 0,
       },
     }
   );
@@ -151,6 +153,7 @@ test('complex test with refueling', (t) => {
         supplies: {
           fuel: 0,
         },
+        timeTaken: 0,
       },
     }
   );
@@ -191,6 +194,7 @@ test('complex test with refueling', (t) => {
         supplies: {
           fuel: 0,
         },
+        timeTaken: 0,
       },
     }
   );
@@ -229,6 +233,7 @@ test('complex test with multiple edge options', (t) => {
         supplies: {
           fuel: 5,
         },
+        timeTaken: 1,
       },
     }
   );
@@ -269,6 +274,7 @@ test('complex test with multiple edge options', (t) => {
         supplies: {
           fuel: 5,
         },
+        timeTaken: 1,
       },
     }
   );
@@ -298,11 +304,11 @@ test('no possible traversal should have an empty result', (t) => {
   // ensure that there is an empty array.
   t.deepEqual(graph.calculateShortestPath('Z', 'A'), {
     finalPath: [],
-    pathProperties: { priority: 0 },
+    pathProperties: { priority: 0, timeTaken: 0 },
   });
   t.deepEqual(graph.calculateShortestPathAsLinkedListResult('Z', 'A'), {
     finalPath: [],
-    pathProperties: { priority: 0 },
+    pathProperties: { priority: 0, timeTaken: 0 },
   });
 });
 
@@ -317,10 +323,10 @@ test('single node hop should only have 2 primitive array elements and one linked
   // ensure that there is an empty array.
   t.deepEqual(graph.calculateShortestPath('A', 'B'), {
     finalPath: ['A', 'B'],
-    pathProperties: { priority: 1, supplies: {} },
+    pathProperties: { priority: 1, supplies: {}, timeTaken: 0 },
   });
   t.deepEqual(graph.calculateShortestPathAsLinkedListResult('A', 'B'), {
     finalPath: [{ source: 'A', target: 'B' }],
-    pathProperties: { priority: 1, supplies: {} },
+    pathProperties: { priority: 1, supplies: {}, timeTaken: 0 },
   });
 });
