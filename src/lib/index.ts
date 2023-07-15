@@ -179,6 +179,7 @@ export class DijkstraCalculator {
     }
     // as long as there is something to visit
     while (nodes.values.length) {
+      console.log('currentnodes', nodes.values);
       smallestNode = nodes.dequeue();
       smallest = smallestNode.id;
       if (smallest === finish) {
@@ -201,7 +202,9 @@ export class DijkstraCalculator {
           const nextVertexProperties = this.vertexProperties[nextNode.id];
           //calculate new distance to neighboring node
           let candidate =
-            distances[smallest].priority + nextNode.properties.weight;
+            distances[smallest].priority +
+            nextNode.properties.weight +
+            (this.heuristic ? this.heuristic(nextNode.id, finish) : 0);
           const newSupplies = { ...distances[smallest].supplies };
           let recoverHere: Record<string, number> = {};
           if (nextNode.properties.consumes) {
@@ -235,9 +238,7 @@ export class DijkstraCalculator {
           }
           const newProperties: PathProperties = {
             supplies: newSupplies,
-            priority:
-              candidate +
-              (this.heuristic ? this.heuristic(nextNode.id, finish) : 0),
+            priority: candidate,
           };
           this.debug(
             'On ',
