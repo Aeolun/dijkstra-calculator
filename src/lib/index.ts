@@ -116,7 +116,10 @@ export class DijkstraCalculator {
   };
   vertexProperties: { [key: NodeId]: VertexProperties };
 
-  constructor(private isDebugging = false) {
+  constructor(
+    private heuristic?: (vertex: NodeId, target: NodeId) => number,
+    private isDebugging = false
+  ) {
     this.adjacencyList = {};
     this.vertexProperties = {};
   }
@@ -232,7 +235,9 @@ export class DijkstraCalculator {
           }
           const newProperties: PathProperties = {
             supplies: newSupplies,
-            priority: candidate,
+            priority:
+              candidate +
+              (this.heuristic ? this.heuristic(nextNode.id, finish) : 0),
           };
           this.debug(
             'On ',
