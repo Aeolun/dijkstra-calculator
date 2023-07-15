@@ -179,7 +179,6 @@ export class DijkstraCalculator {
     }
     // as long as there is something to visit
     while (nodes.values.length) {
-      console.log('currentnodes', nodes.values);
       smallestNode = nodes.dequeue();
       smallest = smallestNode.id;
       if (smallest === finish) {
