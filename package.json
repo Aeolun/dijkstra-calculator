@@ -17,7 +17,6 @@
     "fix:lint": "eslint src --ext .ts --fix",
     "test": "./node_modules/.bin/npm-run-all -s build test:*",
     "test:lint": "eslint src --ext .ts",
-    "test:prettier": "prettier \"src/**/*.ts\" --list-different",
     "test:unit": "vitest",
     "check-cli": "./node_modules/.bin/npm-run-all -s test diff-integration-tests check-integration-tests",
     "check-integration-tests": "./node_modules/.bin/npm-run-all -s check-integration-test:*",

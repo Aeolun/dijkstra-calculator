@@ -2,7 +2,7 @@
 
 # A Typescript implementation of Dijkstra's shortest path algorithm
 
-> @aeolun: This is mildly modified from the original to return the final weight for a route
+> @aeolun: This is fairly seriously modified from the original to return the final weight for a route, and take into account a variety of limits like fuel
 
 - **GitHub URL**: https://github.com/getditto/dijkstra-calculator
 - **TypeDoc Link**: https://getditto.github.io/dijkstra-calculator

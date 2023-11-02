@@ -1,6 +1,8 @@
-import { DijkstraCalculator, NodeId } from './index';
-import system from './system.json';
 import * as fs from 'fs';
+
+import system from './system.json';
+
+import { DijkstraCalculator, NodeId } from './index';
 
 interface Waypoint {
   symbol: string;
@@ -15,6 +17,9 @@ interface Route {
   consumes?: Partial<Record<string, number>>;
   recover?: Partial<Record<string, number>>;
   weight?: number;
+  weightFromResources?: number;
+  totalRecovered?: Partial<Record<string, number>>
+  totalConsumed: Partial<Record<string, number>>
 }
 
 interface Connection {
@@ -87,7 +92,10 @@ function renderRouteSVG(
             <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
               <tspan x="0" dy="1.2em">${route.edge}</tspan>
               <tspan x="0" dy="1.2em">${
-                route.weight ? `(${route.weight})` : ''
+                route.weight ? `(E-${route.weight})` : ''
+              }</tspan>
+              <tspan x="0" dy="1.2em">${
+                route.weightFromResources ? `(R-${route.weightFromResources})` : ''
               }</tspan>
               <tspan x="0" dy="1.2em">${
                 route.consumes ? `-${JSON.stringify(route.consumes)}` : ''
@@ -95,6 +103,13 @@ function renderRouteSVG(
               <tspan x="0" dy="1.2em">${
                 route.recover ? `+${JSON.stringify(route.recover)}` : ''
               }</tspan>
+              <tspan x="0" dy="1.2em">${
+                route.totalRecovered ? `+${JSON.stringify(route.totalRecovered)}` : ''
+          }</tspan>
+          <tspan x="0" dy="1.2em">${
+            route.totalConsumed ? `-${JSON.stringify(route.totalConsumed)}` : ''
+          }</tspan>
+
             </text>
             </g>
           `;
@@ -113,15 +128,34 @@ const getDistance = (
   return Math.round(Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2)));
 };
 
+const waypointPositions: Record<string, { x: number; y: number }> = {};
+system.forEach((waypoint) => {
+  waypointPositions[waypoint.symbol] = {
+    x: waypoint.x,
+    y: waypoint.y,
+  };
+})
+
 const connections: Connection[] = [];
-const dijkstra = new DijkstraCalculator(() => 0, true);
+const dijkstra = new DijkstraCalculator((vertex, target) => {
+  const distance = getDistance(
+    waypointPositions[vertex],
+    waypointPositions[target]
+  );
+  return distance;
+}, false);
 system.forEach((waypoint) => {
   dijkstra.addVertex(waypoint.symbol, {
     recover: waypoint.fuel
       ? {
-          fuel: {
-            cost: waypoint.fuel / 100,
-          },
+          fuel: (current, max) => {
+            const recover = max - current
+            const costCount = Math.ceil(recover / 100)
+            return {
+              recoverAmount: recover,
+              cost: costCount * waypoint.fuel
+            }
+          }
         }
       : undefined,
   });
@@ -132,7 +166,9 @@ system.forEach((waypoint) => {
       return false;
     }
     const distance = getDistance(waypoint, otherWaypoint);
-    return distance <= 100;
+    return distance <= 300;
+  }).filter((d, i) => {
+    return i % 2 === 0
   });
   const clostestWaypoints = system
     .filter(
@@ -145,7 +181,7 @@ system.forEach((waypoint) => {
       const bDistance = getDistance(waypoint, b);
       return aDistance - bDistance;
     })
-    .slice(0, 7);
+    .slice(0, 5);
 
   [...clostestWaypoints, ...waypointsWithin100].forEach((otherWaypoint) => {
     connections.push({
@@ -153,22 +189,26 @@ system.forEach((waypoint) => {
       target: otherWaypoint.symbol,
     });
     const distance = getDistance(waypoint, otherWaypoint);
+    const creditsPerSecond = 3;
+    const edgeCost = (speed: number, multiplier: number, distance: number) => {
+      return Math.floor(Math.round(Math.max(distance, 1))*(multiplier / speed) + 15) * creditsPerSecond;
+    }
     dijkstra.addEdge(waypoint.symbol, otherWaypoint.symbol, {
-      weight: distance + 3,
+      weight: edgeCost(30, 7.5, distance),
       id: 'burn',
       consumes: {
-        fuel: distance * 2,
+        fuel: Math.max(distance * 2, 1),
       },
     });
     dijkstra.addEdge(waypoint.symbol, otherWaypoint.symbol, {
-      weight: distance,
+      weight: edgeCost(30, 15, distance),
       id: 'warp',
       consumes: {
-        fuel: distance,
+        fuel: Math.max(distance, 1),
       },
     });
     dijkstra.addEdge(waypoint.symbol, otherWaypoint.symbol, {
-      weight: distance * 10,
+      weight: edgeCost(30, 150, distance),
       id: 'drift',
       consumes: {
         fuel: 1,
@@ -189,7 +229,9 @@ const route = dijkstra.calculateShortestPathAsLinkedListResult(
     },
   }
 );
-console.log('final cost', route.pathProperties.priority);
+console.log('final cost', route.pathProperties.priority, {
+  properties: route.pathProperties
+});
 
 const svg = renderRouteSVG(system, connections, route.finalPath);
 fs.writeFileSync('route.svg', svg, 'utf-8');

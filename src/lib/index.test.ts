@@ -301,7 +301,14 @@ test('test with lacking fuel', () => {
 
   graph.addVertex('A');
   graph.addVertex('B');
-  graph.addVertex('C', { recover: { fuel: { cost: 1 } } });
+  graph.addVertex('C', { recover: { fuel: (current, max) => {
+        const recover = max - current
+        return {
+          recoverAmount: recover,
+          cost: recover
+        }
+      }
+  } });
   graph.addVertex('D');
   graph.addVertex('E');
   graph.addVertex('F');
@@ -382,7 +389,14 @@ test('test with heuristic', () => {
 
   graph.addVertex('A');
   graph.addVertex('B');
-  graph.addVertex('C', { recover: { fuel: { cost: 0 } } });
+  graph.addVertex('C', { recover: { fuel: (current, max) => {
+        const recover = max - current
+        return {
+          recoverAmount: recover,
+          cost: 0
+        }
+      }
+    } });
   graph.addVertex('D');
   graph.addVertex('E');
   graph.addVertex('F');
