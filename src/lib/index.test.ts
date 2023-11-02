@@ -1,4 +1,4 @@
-import test from 'ava';
+import { expect, test } from 'vitest';
 
 import { DijkstraCalculator } from './';
 
@@ -280,7 +280,7 @@ import { DijkstraCalculator } from './';
 //   );
 // });
 
-test('test with heuristic', (t) => {
+test('test with lacking fuel', () => {
   const locations: Record<string, { x: number; y: number }> = {
     A: { x: 0, y: 0 },
     B: { x: 1, y: 1 },
@@ -301,7 +301,7 @@ test('test with heuristic', (t) => {
 
   graph.addVertex('A');
   graph.addVertex('B');
-  graph.addVertex('C', { recover: { fuel: true } });
+  graph.addVertex('C', { recover: { fuel: { cost: 1 } } });
   graph.addVertex('D');
   graph.addVertex('E');
   graph.addVertex('F');
@@ -318,47 +318,126 @@ test('test with heuristic', (t) => {
   graph.addEdge('D', 'F', { id: 'warp', weight: 2, consumes: { fuel: 1 } });
   graph.addEdge('E', 'F', { id: 'warp', weight: 2, consumes: { fuel: 1 } });
 
-  t.deepEqual(
-    graph.calculateShortestPathAsLinkedListResult('A', 'E', {
-      supplies: { fuel: 10 },
-      maxSupplies: { fuel: 10 },
-    }),
-    {
-      finalPath: [
-        {
-          source: 'A',
-          target: 'B',
-          edge: 'burn',
-          weight: 1,
-          consumes: { fuel: 2 },
-          recover: {},
+  const res = graph.calculateShortestPathAsLinkedListResult('A', 'E', {
+    supplies: { fuel: 4 },
+    supplyCapacity: { fuel: 4 },
+  });
+  expect(res).toMatchObject({
+    finalPath: [
+      {
+        source: 'A',
+        target: 'C',
+        edge: 'warp',
+        weight: 2,
+        consumes: { fuel: 1 },
+        recover: {
+          fuel: 1,
         },
-        {
-          source: 'B',
-          target: 'D',
-          edge: 'burn',
-          weight: 1,
-          consumes: { fuel: 2 },
-          recover: {},
-        },
-        {
-          source: 'D',
-          target: 'E',
-          edge: 'warp',
-          weight: 2,
-          consumes: { fuel: 1 },
-          recover: {},
-        },
-      ],
-      pathProperties: {
-        priority: 4,
-        supplies: {
-          fuel: 5,
-        },
-        timeTaken: 1,
       },
-    }
-  );
+      {
+        source: 'C',
+        target: 'F',
+        edge: 'warp',
+        weight: 2,
+        consumes: { fuel: 1 },
+        recover: {},
+      },
+      {
+        source: 'F',
+        target: 'E',
+        edge: 'warp',
+        weight: 2,
+        consumes: { fuel: 1 },
+        recover: {},
+      },
+    ],
+    pathProperties: {
+      priority: 9.121320343559642,
+      supplies: {
+        fuel: 2,
+      },
+    },
+  });
+  expect(res.pathProperties.timeTaken).toBeLessThan(5);
+});
+
+test('test with heuristic', () => {
+  const locations: Record<string, { x: number; y: number }> = {
+    A: { x: 0, y: 0 },
+    B: { x: 1, y: 1 },
+    C: { x: 2, y: 2 },
+    D: { x: 3, y: 3 },
+    E: { x: 4, y: 4 },
+    F: { x: 5, y: 5 },
+  };
+
+  const graph = new DijkstraCalculator((A, B) => {
+    return (
+      Math.sqrt(
+        Math.pow(locations[B].x - locations[A].x, 2) +
+          Math.pow(locations[B].y - locations[A].y, 2)
+      ) * 0.5
+    );
+  });
+
+  graph.addVertex('A');
+  graph.addVertex('B');
+  graph.addVertex('C', { recover: { fuel: { cost: 0 } } });
+  graph.addVertex('D');
+  graph.addVertex('E');
+  graph.addVertex('F');
+
+  graph.addEdge('A', 'B', { id: 'warp', weight: 2, consumes: { fuel: 1 } });
+  graph.addEdge('A', 'B', { id: 'burn', weight: 1, consumes: { fuel: 2 } });
+  graph.addEdge('A', 'C', { id: 'warp', weight: 2, consumes: { fuel: 1 } });
+  graph.addEdge('A', 'C', { id: 'burn', weight: 1, consumes: { fuel: 2 } });
+  graph.addEdge('B', 'D', { id: 'warp', weight: 2, consumes: { fuel: 1 } });
+  graph.addEdge('B', 'D', { id: 'burn', weight: 1, consumes: { fuel: 2 } });
+  graph.addEdge('C', 'D', { id: 'warp', weight: 2, consumes: { fuel: 1 } });
+  graph.addEdge('C', 'F', { id: 'warp', weight: 2, consumes: { fuel: 1 } });
+  graph.addEdge('D', 'E', { id: 'warp', weight: 2, consumes: { fuel: 1 } });
+  graph.addEdge('D', 'F', { id: 'warp', weight: 2, consumes: { fuel: 1 } });
+  graph.addEdge('E', 'F', { id: 'warp', weight: 2, consumes: { fuel: 1 } });
+
+  const res = graph.calculateShortestPathAsLinkedListResult('A', 'E', {
+    supplies: { fuel: 10 },
+    supplyCapacity: { fuel: 10 },
+  });
+  expect(res).toMatchObject({
+    finalPath: [
+      {
+        source: 'A',
+        target: 'B',
+        edge: 'burn',
+        weight: 1,
+        consumes: { fuel: 2 },
+        recover: {},
+      },
+      {
+        source: 'B',
+        target: 'D',
+        edge: 'burn',
+        weight: 1,
+        consumes: { fuel: 2 },
+        recover: {},
+      },
+      {
+        source: 'D',
+        target: 'E',
+        edge: 'warp',
+        weight: 2,
+        consumes: { fuel: 1 },
+        recover: {},
+      },
+    ],
+    pathProperties: {
+      priority: 6.82842712474619,
+      supplies: {
+        fuel: 5,
+      },
+    },
+  });
+  expect(res.pathProperties.timeTaken).toBeLessThan(5);
 });
 
 // test('no possible traversal should have an empty result', (t) => {

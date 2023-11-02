@@ -2,19 +2,19 @@
  * A unique identifier for the
  */
 export type NodeId = string;
-export interface Node {
+export interface Node<RESOURCES extends string> {
   id: NodeId;
-  properties: PathProperties;
+  properties: PathProperties<RESOURCES>;
 }
-class PriorityQueue {
-  values: Node[];
+class PriorityQueue<RESOURCES extends string> {
+  values: Node<RESOURCES>[];
 
   constructor() {
     this.values = [];
   }
 
-  enqueue(id: NodeId, properties: PathProperties) {
-    const newNode: Node = { id, properties };
+  enqueue(id: NodeId, properties: PathProperties<RESOURCES>) {
+    const newNode: Node<RESOURCES> = { id, properties };
     this.values.push(newNode);
     this.bubbleUp();
   }
@@ -47,7 +47,8 @@ class PriorityQueue {
     while (true) {
       const leftChildIdx = 2 * idx + 1;
       const rightChildIdx = 2 * idx + 2;
-      let leftChild: Node | undefined, rightChild: Node | undefined;
+      let leftChild: Node<RESOURCES> | undefined,
+        rightChild: Node<RESOURCES> | undefined;
       let swap = null;
 
       if (leftChildIdx < length) {
@@ -76,45 +77,53 @@ class PriorityQueue {
   }
 }
 
-export interface LinkedListItem {
+type PartialRecord<K extends keyof any, T> = Partial<Record<K, T>>;
+
+export interface LinkedListItem<RESOURCES extends string> {
   source: NodeId;
   target: NodeId;
   edge?: NodeId;
-  consumes?: Record<string, number>;
-  recover?: Record<string, number>;
+  consumes?: PartialRecord<RESOURCES, number>;
+  recover?: PartialRecord<RESOURCES, number>;
   weight?: number;
 }
 
-export interface VertexProperties {
-  recover?: Record<string, boolean>;
+export interface VertexProperties<RESOURCES extends string> {
+  recover?: PartialRecord<
+    RESOURCES,
+    {
+      cost: number;
+    }
+  >;
 }
 
-export interface EdgeProperties {
+export interface EdgeProperties<RESOURCES extends string> {
   id?: string;
   weight: number;
-  consumes?: Record<string, number>;
-  recover?: Record<string, number>;
+  consumes?: PartialRecord<RESOURCES, number>;
+  recover?: PartialRecord<RESOURCES, number>;
 }
 
-export interface PathProperties {
+export interface PathProperties<RESOURCES extends string> {
   priority: number;
-  supplies?: Record<string, number>;
-  maxSupplies?: Record<string, number>;
+  supplies?: PartialRecord<RESOURCES, number>;
+  supplyCapacity?: PartialRecord<RESOURCES, number>;
 }
 
-export type PathReturnProperties = PathProperties & {
-  timeTaken: number;
-};
-
-export type PathNode = {
-  vertexId: NodeId;
-} & Partial<EdgeProperties>;
-
-export class DijkstraCalculator {
-  adjacencyList: {
-    [key: NodeId]: { id: NodeId; properties: EdgeProperties }[];
+export type PathReturnProperties<RESOURCES extends string> =
+  PathProperties<RESOURCES> & {
+    timeTaken: number;
   };
-  vertexProperties: { [key: NodeId]: VertexProperties };
+
+export type PathNode<RESOURCES extends string> = {
+  vertexId: NodeId;
+} & Partial<EdgeProperties<RESOURCES>>;
+
+export class DijkstraCalculator<RESOURCES extends string> {
+  adjacencyList: {
+    [key: NodeId]: { id: NodeId; properties: EdgeProperties<RESOURCES> }[];
+  };
+  vertexProperties: { [key: NodeId]: VertexProperties<RESOURCES> };
 
   constructor(
     private heuristic?: (vertex: NodeId, target: NodeId) => number,
@@ -124,7 +133,7 @@ export class DijkstraCalculator {
     this.vertexProperties = {};
   }
 
-  addVertex(vertex: NodeId, properties?: VertexProperties) {
+  addVertex(vertex: NodeId, properties?: VertexProperties<RESOURCES>) {
     if (!this.adjacencyList[vertex]) {
       this.adjacencyList[vertex] = [];
       if (properties) {
@@ -136,7 +145,7 @@ export class DijkstraCalculator {
   addEdge(
     vertex1: NodeId,
     vertex2: NodeId,
-    properties: EdgeProperties = { weight: 1 }
+    properties: EdgeProperties<RESOURCES> = { weight: 1 }
   ) {
     this.adjacencyList[vertex1].push({ id: vertex2, properties });
     this.adjacencyList[vertex2].push({ id: vertex1, properties });
@@ -155,16 +164,21 @@ export class DijkstraCalculator {
   calculateShortestPathAsLinkedListResult(
     start: NodeId,
     finish: NodeId,
-    properties: Omit<PathProperties, 'priority'> = {}
-  ): { finalPath: LinkedListItem[]; pathProperties: PathReturnProperties } {
+    properties: Omit<PathProperties<RESOURCES>, 'priority'> = {}
+  ): {
+    finalPath: LinkedListItem<RESOURCES>[];
+    pathProperties: PathReturnProperties<RESOURCES>;
+  } {
     this.debug("Start running Dijkstra's algorithm");
     const startTime = Date.now();
     const nodes = new PriorityQueue();
-    const distances: { [key: NodeId]: PathProperties } = {};
+    const distances: { [key: NodeId]: PathProperties<RESOURCES> } = {};
     const previous: { [key: NodeId]: NodeId } = {};
-    const previousEdgeId: { [key: NodeId]: EdgeProperties | undefined } = {};
-    const path: PathNode[] = []; //to return at end
-    let smallestNode: Node | null = null;
+    const previousEdgeId: {
+      [key: NodeId]: EdgeProperties<RESOURCES> | undefined;
+    } = {};
+    const path: PathNode<RESOURCES>[] = []; //to return at end
+    let smallestNode: Node<RESOURCES> | null = null;
     let smallest: string | null = null;
     //build up initial state
     for (const vertex in this.adjacencyList) {
@@ -204,44 +218,56 @@ export class DijkstraCalculator {
             distances[smallest].priority +
             nextNode.properties.weight +
             (this.heuristic ? this.heuristic(nextNode.id, finish) : 0);
-          const newSupplies = { ...distances[smallest].supplies };
-          let recoverHere: Record<string, number> = {};
+          const newSupplies: PartialRecord<RESOURCES, number> = {
+            ...distances[smallest].supplies,
+          };
+          const recoverHere: Record<string, number> = {};
           if (nextNode.properties.consumes) {
             for (const supply in nextNode.properties.consumes) {
-              if (newSupplies[supply]) {
-                newSupplies[supply] -= nextNode.properties.consumes[supply];
-              } else {
-                newSupplies[supply] = -nextNode.properties.consumes[supply];
-              }
-              if (newSupplies[supply] < 0) {
-                candidate += 1000000000;
-              }
+              newSupplies[supply] =
+                (newSupplies[supply] ?? 0) -
+                (nextNode.properties.consumes[supply] ?? 0);
             }
           }
+          // any step with negative supplies is a step we can't take
+          for (const supply in newSupplies) {
+            const supp = newSupplies[supply];
+            if (supp && supp < 0) {
+              candidate += Math.abs(supp) * 100000;
+            }
+          }
+
           if (nextVertexProperties && nextVertexProperties.recover) {
             this.debug('recover found');
             for (const supply in nextVertexProperties.recover) {
               const smallestSupplies = distances[smallest].supplies;
               if (
-                properties.maxSupplies &&
-                properties.maxSupplies[supply] &&
+                properties.supplyCapacity &&
+                properties.supplyCapacity[supply] &&
                 smallestSupplies &&
                 smallestSupplies[supply]
               ) {
                 const recoverAmount =
-                  properties.maxSupplies[supply] - newSupplies[supply];
+                  (properties.supplyCapacity[supply] ?? 0) -
+                  (newSupplies[supply] ?? 0);
+                // increase cost of path by the amount of resources we need to recover times the cost of recovering here
+                candidate +=
+                  recoverAmount *
+                  (nextVertexProperties.recover[supply]?.cost ?? 0);
                 recoverHere[supply] = recoverAmount;
               }
-              newSupplies[supply] = properties.maxSupplies?.[supply] ?? 0;
+              newSupplies[supply] = properties.supplyCapacity?.[supply] ?? 0;
             }
           }
-          const newProperties: PathProperties = {
+          const newProperties: PathProperties<RESOURCES> = {
             supplies: newSupplies,
             priority: candidate,
           };
           this.debug(
             'On ',
             smallest,
+            ' over ',
+            nextNode.properties.id,
             ' traveling to ',
             nextNode.id,
             ' state at end of trip ',
@@ -274,7 +300,7 @@ export class DijkstraCalculator {
       }
     }
 
-    let finalPath: PathNode[] = [];
+    let finalPath: PathNode<RESOURCES>[] = [];
     if (!smallest) {
       finalPath = path.reverse();
     } else {
@@ -295,7 +321,7 @@ export class DijkstraCalculator {
 
     this.debug('final distance', distances[finish]);
 
-    const linkedListItems: LinkedListItem[] = [];
+    const linkedListItems: LinkedListItem<RESOURCES>[] = [];
     for (let i = 0; i < finalPath.length; i++) {
       if (i == finalPath.length - 1) {
         break;
@@ -334,15 +360,15 @@ export class DijkstraCalculator {
   calculateShortestPath(
     start: NodeId,
     finish: NodeId,
-    properties: Omit<PathProperties, 'priority'> = {}
-  ): { finalPath: string[]; pathProperties: PathReturnProperties } {
+    properties: Omit<PathProperties<RESOURCES>, 'priority'> = {}
+  ): { finalPath: string[]; pathProperties: PathReturnProperties<RESOURCES> } {
     const result = this.calculateShortestPathAsLinkedListResult(
       start,
       finish,
       properties
     );
 
-    let finalPath: string[] = [];
+    const finalPath: string[] = [];
     if (result.finalPath.length > 0) {
       result.finalPath.forEach((item, index) => {
         if (index === 0) finalPath.push(item.source);

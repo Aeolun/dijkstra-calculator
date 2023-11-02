@@ -18,8 +18,7 @@
     "test": "./node_modules/.bin/npm-run-all -s build test:*",
     "test:lint": "eslint src --ext .ts",
     "test:prettier": "prettier \"src/**/*.ts\" --list-different",
-    "test:spelling": "cspell \"{README.md,.github/*.md,src/**/*.ts}\"",
-    "test:unit": "nyc --silent ava",
+    "test:unit": "vitest",
     "check-cli": "./node_modules/.bin/npm-run-all -s test diff-integration-tests check-integration-tests",
     "check-integration-tests": "./node_modules/.bin/npm-run-all -s check-integration-test:*",
     "diff-integration-tests": "mkdir -p diff && rm -rf diff/test && cp -r test diff/test && rm -rf diff/test/test-*/.git && cd diff && git init --quiet && git add -A && git commit --quiet --no-verify --allow-empty -m 'WIP' && echo '\\n\\nCommitted most recent integration test output in the \"diff\" directory. Review the changes with \"cd diff && git diff HEAD\" or your preferred git diff viewer.'",
@@ -42,12 +41,11 @@
     "node": ">=10"
   },
   "devDependencies": {
-    "@types/node": "^18.15.3",
     "@ava/typescript": "^1.1.1",
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
+    "@types/node": "^18.15.3",
     "@typescript-eslint/eslint-plugin": "^4.0.1",
     "@typescript-eslint/parser": "^4.0.1",
-    "ava": "5.3.1",
     "codecov": "^3.5.0",
     "cspell": "^4.1.0",
     "cz-conventional-changelog": "^3.3.0",
@@ -63,8 +61,10 @@
     "prettier": "^2.1.1",
     "standard-version": "^9.0.0",
     "ts-node": "^9.0.0",
+    "tsx": "^3.14.0",
     "typedoc": "^0.24.8",
-    "typescript": "^4.5.5"
+    "typescript": "^4.5.5",
+    "vitest": "^0.34.6"
   },
   "files": [
     "build/main",
@@ -75,20 +75,7 @@
     "LICENSE",
     "README.md"
   ],
-  "ava": {
-    "failFast": true,
-    "timeout": "60s",
-    "typescript": {
-      "rewritePaths": {
-        "src/": "build/main/"
-      }
-    },
-    "files": [
-      "!build/module/**"
-    ]
-  },
-  "config": {
-  },
+  "config": {},
   "prettier": {
     "singleQuote": true
   },
