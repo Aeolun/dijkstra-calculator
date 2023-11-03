@@ -1364,11 +1364,15 @@
 <line x1="-22" y1="80" x2="7" y2="-103" stroke="red" marker-end="url(#arrow)" />
 <line x1="7" y1="-103" x2="261" y2="-242" stroke="red" marker-end="url(#arrow)" />
 <line x1="261" y1="-242" x2="571" y2="-428" stroke="red" marker-end="url(#arrow)" />
+<line x1="571" y1="-428" x2="219" y2="-276" stroke="red" marker-end="url(#arrow)" />
+<line x1="219" y1="-276" x2="-8" y2="-227" stroke="red" marker-end="url(#arrow)" />
+<line x1="-8" y1="-227" x2="-300" y2="-176" stroke="red" marker-end="url(#arrow)" />
+<line x1="-300" y1="-176" x2="-727" y2="-303" stroke="red" marker-end="url(#arrow)" />
       <!-- render edge names, weight, and consumption/recovery -->
       
             <g transform="translate(-423 405)">
             <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
-              <tspan x="0" dy="1.2em">warp</tspan>
+              <tspan x="0" dy="1.2em">cruise</tspan>
               <tspan x="0" dy="1.2em">(E-639)</tspan>
               <tspan x="0" dy="1.2em"></tspan>
               <tspan x="0" dy="1.2em">-{"fuel":397}</tspan>
@@ -1410,7 +1414,7 @@
 
             <g transform="translate(-7.5 -11.5)">
             <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
-              <tspan x="0" dy="1.2em">warp</tspan>
+              <tspan x="0" dy="1.2em">cruise</tspan>
               <tspan x="0" dy="1.2em">(E-321)</tspan>
               <tspan x="0" dy="1.2em">(R-170)</tspan>
               <tspan x="0" dy="1.2em">-{"fuel":185}</tspan>
@@ -1424,7 +1428,7 @@
 
             <g transform="translate(134 -172.5)">
             <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
-              <tspan x="0" dy="1.2em">warp</tspan>
+              <tspan x="0" dy="1.2em">cruise</tspan>
               <tspan x="0" dy="1.2em">(E-480)</tspan>
               <tspan x="0" dy="1.2em"></tspan>
               <tspan x="0" dy="1.2em">-{"fuel":290}</tspan>
@@ -1440,6 +1444,62 @@
             <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
               <tspan x="0" dy="1.2em">drift</tspan>
               <tspan x="0" dy="1.2em">(E-5475)</tspan>
+              <tspan x="0" dy="1.2em"></tspan>
+              <tspan x="0" dy="1.2em">-{"fuel":1}</tspan>
+              <tspan x="0" dy="1.2em">+{}</tspan>
+              <tspan x="0" dy="1.2em"></tspan>
+          <tspan x="0" dy="1.2em"></tspan>
+
+            </text>
+            </g>
+          
+
+            <g transform="translate(395 -352)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">drift</tspan>
+              <tspan x="0" dy="1.2em">(E-5790)</tspan>
+              <tspan x="0" dy="1.2em"></tspan>
+              <tspan x="0" dy="1.2em">-{"fuel":1}</tspan>
+              <tspan x="0" dy="1.2em">+{}</tspan>
+              <tspan x="0" dy="1.2em"></tspan>
+          <tspan x="0" dy="1.2em"></tspan>
+
+            </text>
+            </g>
+          
+
+            <g transform="translate(105.5 -251.5)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">drift</tspan>
+              <tspan x="0" dy="1.2em">(E-3525)</tspan>
+              <tspan x="0" dy="1.2em">(R-255)</tspan>
+              <tspan x="0" dy="1.2em">-{"fuel":1}</tspan>
+              <tspan x="0" dy="1.2em">+{"fuel":293}</tspan>
+              <tspan x="0" dy="1.2em"></tspan>
+          <tspan x="0" dy="1.2em"></tspan>
+
+            </text>
+            </g>
+          
+
+            <g transform="translate(-154 -201.5)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">cruise</tspan>
+              <tspan x="0" dy="1.2em">(E-489)</tspan>
+              <tspan x="0" dy="1.2em"></tspan>
+              <tspan x="0" dy="1.2em">-{"fuel":296}</tspan>
+              <tspan x="0" dy="1.2em">+{}</tspan>
+              <tspan x="0" dy="1.2em"></tspan>
+          <tspan x="0" dy="1.2em"></tspan>
+
+            </text>
+            </g>
+          
+
+            <g transform="translate(-513.5 -239.5)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">drift</tspan>
+              <tspan x="0" dy="1.2em">(E-6720)</tspan>
               <tspan x="0" dy="1.2em"></tspan>
               <tspan x="0" dy="1.2em">-{"fuel":1}</tspan>
               <tspan x="0" dy="1.2em">+{}</tspan>

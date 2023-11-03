@@ -94,7 +94,10 @@ export interface LinkedListItem<RESOURCES extends string> {
 export interface VertexProperties<RESOURCES extends string> {
   recover?: PartialRecord<
     RESOURCES,
-    (currentLevel: number, maxLevel: number) => {
+    (
+      currentLevel: number,
+      maxLevel: number
+    ) => {
       recoverAmount: number;
       cost: number;
     }
@@ -165,6 +168,85 @@ export class DijkstraCalculator<RESOURCES extends string> {
     if (this.isDebugging) console.log(...args);
   }
 
+  calculateShortestRouteAsLinkedListResults(
+    nodes: NodeId[],
+    properties: Omit<PathProperties<RESOURCES>, 'priority'> = {}
+  ) {
+    // calculate route from first node hitting all specified nodes in order
+    const startNode = nodes.shift();
+    if (!startNode) {
+      throw new Error('No nodes provided');
+    }
+
+    const results: {
+      finalPath: LinkedListItem<RESOURCES>[];
+      pathProperties: PathReturnProperties<RESOURCES>;
+    } = {
+      finalPath: [],
+      pathProperties: {
+        priority: 0,
+        timeTaken: 0,
+        supplies: {},
+        totalConsumed: {},
+        totalRecovered: {},
+        resourceWeight: {},
+      },
+    };
+
+    let currentNode = startNode;
+    while (nodes.length > 0) {
+      const nextNode = nodes.shift();
+      if (!nextNode) {
+        throw new Error('No nodes provided');
+      }
+      const route = this.calculateShortestPathAsLinkedListResult(
+        currentNode,
+        nextNode,
+        {
+          ...properties,
+          supplies: {
+            ...properties.supplies,
+            ...results.pathProperties.supplies,
+          },
+        }
+      );
+      results.finalPath = results.finalPath.concat(route.finalPath);
+      results.pathProperties.priority += route.pathProperties.priority;
+      results.pathProperties.timeTaken += route.pathProperties.timeTaken;
+      for (const supply in route.pathProperties.supplies) {
+        if (results.pathProperties.supplies) {
+          results.pathProperties.supplies[supply] =
+            (results.pathProperties.supplies[supply] ?? 0) +
+            (route.pathProperties.supplies?.[supply] ?? 0);
+        }
+      }
+      for (const supply in route.pathProperties.totalConsumed) {
+        if (results.pathProperties.totalConsumed) {
+          results.pathProperties.totalConsumed[supply] =
+            (results.pathProperties.totalConsumed[supply] ?? 0) +
+            (route.pathProperties.totalConsumed?.[supply] ?? 0);
+        }
+      }
+      for (const supply in route.pathProperties.totalRecovered) {
+        if (results.pathProperties.totalRecovered) {
+          results.pathProperties.totalRecovered[supply] =
+            (results.pathProperties.totalRecovered[supply] ?? 0) +
+            (route.pathProperties.totalRecovered?.[supply] ?? 0);
+        }
+      }
+      for (const supply in route.pathProperties.resourceWeight) {
+        if (results.pathProperties.resourceWeight) {
+          results.pathProperties.resourceWeight[supply] =
+            (results.pathProperties.resourceWeight[supply] ?? 0) +
+            (route.pathProperties.resourceWeight?.[supply] ?? 0);
+        }
+      }
+      currentNode = nextNode;
+    }
+
+    return results;
+  }
+
   /**
    * Given the provided weights of each edge
    * @param start The starting {@link NodeId} to begin traversal
@@ -233,13 +315,13 @@ export class DijkstraCalculator<RESOURCES extends string> {
           };
           const totalConsumed: PartialRecord<RESOURCES, number> = {
             ...distances[smallest].totalConsumed,
-          }
+          };
           const totalRecovered: PartialRecord<RESOURCES, number> = {
             ...distances[smallest].totalRecovered,
-          }
+          };
           const totalResourceWeight: PartialRecord<RESOURCES, number> = {
             ...distances[smallest].resourceWeight,
-          }
+          };
           let weightFromResources = 0;
           const recoverHere: Record<string, number> = {};
           if (nextNode.properties.consumes) {
@@ -262,25 +344,32 @@ export class DijkstraCalculator<RESOURCES extends string> {
             this.debug('recover found');
             for (const supply in nextVertexProperties.recover) {
               const smallestSupplies = distances[smallest].supplies;
-              const supplyFunction = nextVertexProperties.recover[supply]
-              const supplyCapacity = properties.supplyCapacity?.[supply]
+              const supplyFunction = nextVertexProperties.recover[supply];
+              const supplyCapacity = properties.supplyCapacity?.[supply];
               const currentSupply = newSupplies[supply] ?? 0;
               if (!supplyCapacity) {
-                throw new Error("No capacity for supply " + supply+', cannot recover.')
+                throw new Error(
+                  'No capacity for supply ' + supply + ', cannot recover.'
+                );
               }
               if (
                 smallestSupplies &&
                 smallestSupplies[supply] &&
                 supplyFunction
               ) {
-                const { recoverAmount, cost } = supplyFunction(currentSupply, supplyCapacity);
+                const { recoverAmount, cost } = supplyFunction(
+                  currentSupply,
+                  supplyCapacity
+                );
                 // increase cost of path by the amount of resources we need to recover times the cost of recovering here
 
                 candidate += cost;
                 weightFromResources += cost;
                 recoverHere[supply] = recoverAmount;
-                totalResourceWeight[supply] = (totalResourceWeight[supply] ?? 0) + cost;
-                totalRecovered[supply] = (totalRecovered[supply] ?? 0) + recoverAmount;
+                totalResourceWeight[supply] =
+                  (totalResourceWeight[supply] ?? 0) + cost;
+                totalRecovered[supply] =
+                  (totalRecovered[supply] ?? 0) + recoverAmount;
               }
               newSupplies[supply] = properties.supplyCapacity?.[supply] ?? 0;
             }
