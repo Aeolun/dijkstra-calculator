@@ -19,7 +19,7 @@ interface Route {
   weight?: number;
   weightFromResources?: number;
   totalRecovered?: Partial<Record<string, number>>;
-  totalConsumed: Partial<Record<string, number>>;
+  totalConsumed?: Partial<Record<string, number>>;
 }
 
 interface Connection {
@@ -173,7 +173,7 @@ system.forEach((waypoint) => {
       const distance = getDistance(waypoint, otherWaypoint);
       return distance <= 300;
     })
-    .filter((d, i) => {
+    .filter((_d, i) => {
       return i % 2 === 0;
     });
   const clostestWaypoints = system
