@@ -146,12 +146,16 @@ export class DijkstraCalculator<RESOURCES extends string> {
     this.vertexProperties = {};
   }
 
-  addVertex(vertex: NodeId, properties?: VertexProperties<RESOURCES>) {
+  ensureVertexAdjacencyList(vertex: NodeId) {
     if (!this.adjacencyList[vertex]) {
       this.adjacencyList[vertex] = [];
-      if (properties) {
-        this.vertexProperties[vertex] = properties;
-      }
+    }
+    return this.adjacencyList[vertex];
+  }
+  addVertex(vertex: NodeId, properties?: VertexProperties<RESOURCES>) {
+    this.ensureVertexAdjacencyList(vertex);
+    if (properties) {
+      this.vertexProperties[vertex] = properties;
     }
   }
 
@@ -160,8 +164,8 @@ export class DijkstraCalculator<RESOURCES extends string> {
     vertex2: NodeId,
     properties: EdgeProperties<RESOURCES> = { weight: 1 }
   ) {
-    this.adjacencyList[vertex1].push({ id: vertex2, properties });
-    this.adjacencyList[vertex2].push({ id: vertex1, properties });
+    this.ensureVertexAdjacencyList(vertex1).push({ id: vertex2, properties });
+    this.ensureVertexAdjacencyList(vertex2).push({ id: vertex1, properties });
   }
 
   debug(...args: any[]) {

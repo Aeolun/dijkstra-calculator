@@ -301,14 +301,17 @@ test('test with lacking fuel', () => {
 
   graph.addVertex('A');
   graph.addVertex('B');
-  graph.addVertex('C', { recover: { fuel: (current, max) => {
-        const recover = max - current
+  graph.addVertex('C', {
+    recover: {
+      fuel: (current, max) => {
+        const recover = max - current;
         return {
           recoverAmount: recover,
-          cost: recover
-        }
-      }
-  } });
+          cost: recover,
+        };
+      },
+    },
+  });
   graph.addVertex('D');
   graph.addVertex('E');
   graph.addVertex('F');
@@ -368,6 +371,18 @@ test('test with lacking fuel', () => {
   expect(res.pathProperties.timeTaken).toBeLessThan(5);
 });
 
+test('can create edges before vertexes', () => {
+  const graph = new DijkstraCalculator();
+  graph.addEdge('A', 'B', { weight: 1 });
+  graph.addEdge('B', 'C', { weight: 1 });
+  graph.addVertex('A');
+  graph.addVertex('B');
+  graph.addVertex('C');
+  expect(graph.calculateShortestPath('A', 'C')).toMatchObject({
+    finalPath: ['A', 'B', 'C'],
+  });
+});
+
 test('test with heuristic', () => {
   const locations: Record<string, { x: number; y: number }> = {
     A: { x: 0, y: 0 },
@@ -389,14 +404,17 @@ test('test with heuristic', () => {
 
   graph.addVertex('A');
   graph.addVertex('B');
-  graph.addVertex('C', { recover: { fuel: (current, max) => {
-        const recover = max - current
+  graph.addVertex('C', {
+    recover: {
+      fuel: (current, max) => {
+        const recover = max - current;
         return {
           recoverAmount: recover,
-          cost: 0
-        }
-      }
-    } });
+          cost: 0,
+        };
+      },
+    },
+  });
   graph.addVertex('D');
   graph.addVertex('E');
   graph.addVertex('F');
