@@ -8,6 +8,7 @@ interface Waypoint {
   symbol: string;
   x: number;
   y: number;
+  fuel?: number;
 }
 
 interface Route {
@@ -40,7 +41,11 @@ function renderRouteSVG(
       <!-- render waypoints -->
       ${waypoints
         .map((waypoint) => {
-          return `<circle cx="${waypoint.x}" cy="${waypoint.y}" r="5" fill="blue" />`;
+          return `<circle cx="${waypoint.x}" cy="${waypoint.y}" r="5" fill="${
+            waypoint.fuel ? 'green' : 'blue'
+          }" /><g transform="translate(${waypoint.x} ${waypoint.y})">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">${waypoint.symbol}</tspan></text></g>`;
         })
         .join('\n')}
       <!-- render connections -->
@@ -157,7 +162,7 @@ system.forEach((waypoint) => {
             const costCount = Math.ceil(recover / 100);
             return {
               recoverAmount: recover,
-              cost: costCount * waypoint.fuel,
+              cost: costCount * (waypoint.fuel - 75),
             };
           },
         }
@@ -203,12 +208,21 @@ system.forEach((waypoint) => {
         ) * creditsPerSecond
       );
     };
+    const extraCost = (supply, max, spent, finalStep) => {
+      if (supply && max) {
+        if (finalStep) {
+          return 3000 * (1 - supply['fuel'] / max['fuel']);
+        }
+      }
+      return (spent['fuel'] / 100) * 75;
+    };
     dijkstra.addEdge(waypoint.symbol, otherWaypoint.symbol, {
       weight: edgeCost(30, 7.5, distance),
       id: 'burn',
       consumes: {
         fuel: Math.max(distance * 2, 1),
       },
+      extraCost,
     });
     dijkstra.addEdge(waypoint.symbol, otherWaypoint.symbol, {
       weight: edgeCost(30, 15, distance),
@@ -216,6 +230,7 @@ system.forEach((waypoint) => {
       consumes: {
         fuel: Math.max(distance, 1),
       },
+      extraCost,
     });
     dijkstra.addEdge(waypoint.symbol, otherWaypoint.symbol, {
       weight: edgeCost(30, 150, distance),
@@ -223,24 +238,31 @@ system.forEach((waypoint) => {
       consumes: {
         fuel: 1,
       },
+      extraCost,
     });
   });
 });
 
-const route = dijkstra.calculateShortestRouteAsLinkedListResults(
-  ['X1-XM43-J68', 'X1-XM43-J78', 'X1-XM43-J72'],
+const route = dijkstra.calculateShortestPathAsLinkedListResult(
+  'X1-XM43-G60',
+  'X1-XM43-B14',
   {
     supplies: {
-      fuel: 400,
+      fuel: 600,
     },
     supplyCapacity: {
-      fuel: 400,
+      fuel: 600,
     },
   }
 );
-console.log('final cost', route.pathProperties.priority, {
-  properties: route.pathProperties,
-});
+console.log(
+  'final cost',
+  route.pathProperties.priority,
+  {
+    properties: route.pathProperties,
+  },
+  route.finalPath
+);
 
 const svg = renderRouteSVG(system, connections, route.finalPath);
 fs.writeFileSync('route.svg', svg, 'utf-8');

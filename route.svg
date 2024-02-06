@@ -4,95 +4,273 @@
         <marker id="arrow" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth" />
       </defs>
       <!-- render waypoints -->
-      <circle cx="207" cy="231" r="5" fill="blue" />
-<circle cx="-13" cy="356" r="5" fill="blue" />
-<circle cx="-29" cy="311" r="5" fill="blue" />
-<circle cx="119" cy="366" r="5" fill="blue" />
-<circle cx="595" cy="-394" r="5" fill="blue" />
-<circle cx="190" cy="18" r="5" fill="blue" />
-<circle cx="352" cy="154" r="5" fill="blue" />
-<circle cx="14" cy="24" r="5" fill="blue" />
-<circle cx="212" cy="251" r="5" fill="blue" />
-<circle cx="521" cy="-559" r="5" fill="blue" />
-<circle cx="0" cy="-55" r="5" fill="blue" />
-<circle cx="0" cy="-55" r="5" fill="blue" />
-<circle cx="-62" cy="-16" r="5" fill="blue" />
-<circle cx="581" cy="465" r="5" fill="blue" />
-<circle cx="-223" cy="241" r="5" fill="blue" />
-<circle cx="-8" cy="-227" r="5" fill="blue" />
-<circle cx="284" cy="-717" r="5" fill="blue" />
-<circle cx="-22" cy="80" r="5" fill="blue" />
-<circle cx="-22" cy="80" r="5" fill="blue" />
-<circle cx="-22" cy="80" r="5" fill="blue" />
-<circle cx="-200" cy="724" r="5" fill="blue" />
-<circle cx="1" cy="44" r="5" fill="blue" />
-<circle cx="-230" cy="-738" r="5" fill="blue" />
-<circle cx="285" cy="-242" r="5" fill="blue" />
-<circle cx="347" cy="-106" r="5" fill="blue" />
-<circle cx="219" cy="-276" r="5" fill="blue" />
-<circle cx="303" cy="93" r="5" fill="blue" />
-<circle cx="-167" cy="272" r="5" fill="blue" />
-<circle cx="-588" cy="515" r="5" fill="blue" />
-<circle cx="-679" cy="359" r="5" fill="blue" />
-<circle cx="-63" cy="-318" r="5" fill="blue" />
-<circle cx="1" cy="44" r="5" fill="blue" />
-<circle cx="56" cy="-371" r="5" fill="blue" />
-<circle cx="-727" cy="-303" r="5" fill="blue" />
-<circle cx="-126" cy="-331" r="5" fill="blue" />
-<circle cx="-104" cy="-343" r="5" fill="blue" />
-<circle cx="176" cy="276" r="5" fill="blue" />
-<circle cx="-258" cy="295" r="5" fill="blue" />
-<circle cx="69" cy="-382" r="5" fill="blue" />
-<circle cx="7" cy="-103" r="5" fill="blue" />
-<circle cx="-270" cy="253" r="5" fill="blue" />
-<circle cx="-335" cy="149" r="5" fill="blue" />
-<circle cx="206" cy="697" r="5" fill="blue" />
-<circle cx="-112" cy="-12" r="5" fill="blue" />
-<circle cx="-153" cy="-17" r="5" fill="blue" />
-<circle cx="227" cy="-247" r="5" fill="blue" />
-<circle cx="261" cy="-242" r="5" fill="blue" />
-<circle cx="106" cy="-313" r="5" fill="blue" />
-<circle cx="123" cy="-321" r="5" fill="blue" />
-<circle cx="150" cy="-718" r="5" fill="blue" />
-<circle cx="-153" cy="-17" r="5" fill="blue" />
-<circle cx="1" cy="44" r="5" fill="blue" />
-<circle cx="72" cy="26" r="5" fill="blue" />
-<circle cx="-22" cy="80" r="5" fill="blue" />
-<circle cx="-17" cy="-448" r="5" fill="blue" />
-<circle cx="-698" cy="206" r="5" fill="blue" />
-<circle cx="133" cy="310" r="5" fill="blue" />
-<circle cx="342" cy="42" r="5" fill="blue" />
-<circle cx="719" cy="67" r="5" fill="blue" />
-<circle cx="-300" cy="-176" r="5" fill="blue" />
-<circle cx="-245" cy="-244" r="5" fill="blue" />
-<circle cx="-718" cy="-145" r="5" fill="blue" />
-<circle cx="-121" cy="-302" r="5" fill="blue" />
-<circle cx="-356" cy="680" r="5" fill="blue" />
-<circle cx="-67" cy="-348" r="5" fill="blue" />
-<circle cx="122" cy="-340" r="5" fill="blue" />
-<circle cx="-541" cy="-531" r="5" fill="blue" />
-<circle cx="377" cy="88" r="5" fill="blue" />
-<circle cx="92" cy="-331" r="5" fill="blue" />
-<circle cx="196" cy="-321" r="5" fill="blue" />
-<circle cx="369" cy="-84" r="5" fill="blue" />
-<circle cx="1" cy="44" r="5" fill="blue" />
-<circle cx="14" cy="24" r="5" fill="blue" />
-<circle cx="-75" cy="305" r="5" fill="blue" />
-<circle cx="0" cy="-55" r="5" fill="blue" />
-<circle cx="72" cy="26" r="5" fill="blue" />
-<circle cx="217" cy="735" r="5" fill="blue" />
-<circle cx="-347" cy="74" r="5" fill="blue" />
-<circle cx="571" cy="-428" r="5" fill="blue" />
-<circle cx="-374" cy="61" r="5" fill="blue" />
-<circle cx="-359" cy="43" r="5" fill="blue" />
-<circle cx="723" cy="112" r="5" fill="blue" />
-<circle cx="-335" cy="-168" r="5" fill="blue" />
-<circle cx="-5" cy="29" r="5" fill="blue" />
-<circle cx="671" cy="-408" r="5" fill="blue" />
-<circle cx="28" cy="770" r="5" fill="blue" />
-<circle cx="72" cy="26" r="5" fill="blue" />
-<circle cx="-62" cy="-16" r="5" fill="blue" />
-<circle cx="14" cy="24" r="5" fill="blue" />
+      <circle cx="207" cy="231" r="5" fill="blue" /><g transform="translate(207 231)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B10</tspan></text></g>
+<circle cx="-13" cy="356" r="5" fill="blue" /><g transform="translate(-13 356)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B14</tspan></text></g>
+<circle cx="-29" cy="311" r="5" fill="blue" /><g transform="translate(-29 311)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B13</tspan></text></g>
+<circle cx="119" cy="366" r="5" fill="blue" /><g transform="translate(119 366)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B12</tspan></text></g>
+<circle cx="595" cy="-394" r="5" fill="blue" /><g transform="translate(595 -394)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-J79</tspan></text></g>
+<circle cx="190" cy="18" r="5" fill="green" /><g transform="translate(190 18)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B5</tspan></text></g>
+<circle cx="352" cy="154" r="5" fill="blue" /><g transform="translate(352 154)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B7</tspan></text></g>
+<circle cx="14" cy="24" r="5" fill="green" /><g transform="translate(14 24)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-A1</tspan></text></g>
+<circle cx="212" cy="251" r="5" fill="blue" /><g transform="translate(212 251)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B8</tspan></text></g>
+<circle cx="521" cy="-559" r="5" fill="blue" /><g transform="translate(521 -559)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-J77</tspan></text></g>
+<circle cx="0" cy="-55" r="5" fill="blue" /><g transform="translate(0 -55)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-E56</tspan></text></g>
+<circle cx="0" cy="-55" r="5" fill="green" /><g transform="translate(0 -55)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-E55</tspan></text></g>
+<circle cx="-62" cy="-16" r="5" fill="green" /><g transform="translate(-62 -16)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-G60</tspan></text></g>
+<circle cx="581" cy="465" r="5" fill="blue" /><g transform="translate(581 465)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-J83</tspan></text></g>
+<circle cx="-223" cy="241" r="5" fill="blue" /><g transform="translate(-223 241)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B18</tspan></text></g>
+<circle cx="-8" cy="-227" r="5" fill="green" /><g transform="translate(-8 -227)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-I67</tspan></text></g>
+<circle cx="284" cy="-717" r="5" fill="blue" /><g transform="translate(284 -717)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-J76</tspan></text></g>
+<circle cx="-22" cy="80" r="5" fill="blue" /><g transform="translate(-22 80)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-D53</tspan></text></g>
+<circle cx="-22" cy="80" r="5" fill="blue" /><g transform="translate(-22 80)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-D52</tspan></text></g>
+<circle cx="-22" cy="80" r="5" fill="green" /><g transform="translate(-22 80)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-D51</tspan></text></g>
+<circle cx="-200" cy="724" r="5" fill="blue" /><g transform="translate(-200 724)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-J87</tspan></text></g>
+<circle cx="1" cy="44" r="5" fill="green" /><g transform="translate(1 44)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-H65</tspan></text></g>
+<circle cx="-230" cy="-738" r="5" fill="blue" /><g transform="translate(-230 -738)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-J74</tspan></text></g>
+<circle cx="285" cy="-242" r="5" fill="blue" /><g transform="translate(285 -242)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B39</tspan></text></g>
+<circle cx="347" cy="-106" r="5" fill="blue" /><g transform="translate(347 -106)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B44</tspan></text></g>
+<circle cx="219" cy="-276" r="5" fill="blue" /><g transform="translate(219 -276)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B40</tspan></text></g>
+<circle cx="303" cy="93" r="5" fill="blue" /><g transform="translate(303 93)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B45</tspan></text></g>
+<circle cx="-167" cy="272" r="5" fill="blue" /><g transform="translate(-167 272)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B17</tspan></text></g>
+<circle cx="-588" cy="515" r="5" fill="blue" /><g transform="translate(-588 515)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-J68</tspan></text></g>
+<circle cx="-679" cy="359" r="5" fill="blue" /><g transform="translate(-679 359)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-J69</tspan></text></g>
+<circle cx="-63" cy="-318" r="5" fill="blue" /><g transform="translate(-63 -318)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B29</tspan></text></g>
+<circle cx="1" cy="44" r="5" fill="green" /><g transform="translate(1 44)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-H62</tspan></text></g>
+<circle cx="56" cy="-371" r="5" fill="blue" /><g transform="translate(56 -371)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B32</tspan></text></g>
+<circle cx="-727" cy="-303" r="5" fill="blue" /><g transform="translate(-727 -303)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-J72</tspan></text></g>
+<circle cx="-126" cy="-331" r="5" fill="blue" /><g transform="translate(-126 -331)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B27</tspan></text></g>
+<circle cx="-104" cy="-343" r="5" fill="blue" /><g transform="translate(-104 -343)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B28</tspan></text></g>
+<circle cx="176" cy="276" r="5" fill="blue" /><g transform="translate(176 276)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B9</tspan></text></g>
+<circle cx="-258" cy="295" r="5" fill="blue" /><g transform="translate(-258 295)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B16</tspan></text></g>
+<circle cx="69" cy="-382" r="5" fill="blue" /><g transform="translate(69 -382)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B34</tspan></text></g>
+<circle cx="7" cy="-103" r="5" fill="green" /><g transform="translate(7 -103)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-K89</tspan></text></g>
+<circle cx="-270" cy="253" r="5" fill="blue" /><g transform="translate(-270 253)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B19</tspan></text></g>
+<circle cx="-335" cy="149" r="5" fill="blue" /><g transform="translate(-335 149)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B20</tspan></text></g>
+<circle cx="206" cy="697" r="5" fill="blue" /><g transform="translate(206 697)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-J85</tspan></text></g>
+<circle cx="-112" cy="-12" r="5" fill="green" /><g transform="translate(-112 -12)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-C48</tspan></text></g>
+<circle cx="-153" cy="-17" r="5" fill="blue" /><g transform="translate(-153 -17)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-C47</tspan></text></g>
+<circle cx="227" cy="-247" r="5" fill="blue" /><g transform="translate(227 -247)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B41</tspan></text></g>
+<circle cx="261" cy="-242" r="5" fill="blue" /><g transform="translate(261 -242)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B42</tspan></text></g>
+<circle cx="106" cy="-313" r="5" fill="blue" /><g transform="translate(106 -313)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B37</tspan></text></g>
+<circle cx="123" cy="-321" r="5" fill="blue" /><g transform="translate(123 -321)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B36</tspan></text></g>
+<circle cx="150" cy="-718" r="5" fill="blue" /><g transform="translate(150 -718)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-J75</tspan></text></g>
+<circle cx="-153" cy="-17" r="5" fill="green" /><g transform="translate(-153 -17)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-C49</tspan></text></g>
+<circle cx="1" cy="44" r="5" fill="green" /><g transform="translate(1 44)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-H64</tspan></text></g>
+<circle cx="72" cy="26" r="5" fill="green" /><g transform="translate(72 26)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-F58</tspan></text></g>
+<circle cx="-22" cy="80" r="5" fill="green" /><g transform="translate(-22 80)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-D50</tspan></text></g>
+<circle cx="-17" cy="-448" r="5" fill="green" /><g transform="translate(-17 -448)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-I66</tspan></text></g>
+<circle cx="-698" cy="206" r="5" fill="blue" /><g transform="translate(-698 206)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-J70</tspan></text></g>
+<circle cx="133" cy="310" r="5" fill="blue" /><g transform="translate(133 310)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B11</tspan></text></g>
+<circle cx="342" cy="42" r="5" fill="green" /><g transform="translate(342 42)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B6</tspan></text></g>
+<circle cx="719" cy="67" r="5" fill="blue" /><g transform="translate(719 67)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-J81</tspan></text></g>
+<circle cx="-300" cy="-176" r="5" fill="blue" /><g transform="translate(-300 -176)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B25</tspan></text></g>
+<circle cx="-245" cy="-244" r="5" fill="blue" /><g transform="translate(-245 -244)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B26</tspan></text></g>
+<circle cx="-718" cy="-145" r="5" fill="blue" /><g transform="translate(-718 -145)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-J71</tspan></text></g>
+<circle cx="-121" cy="-302" r="5" fill="blue" /><g transform="translate(-121 -302)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B30</tspan></text></g>
+<circle cx="-356" cy="680" r="5" fill="blue" /><g transform="translate(-356 680)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-J88</tspan></text></g>
+<circle cx="-67" cy="-348" r="5" fill="blue" /><g transform="translate(-67 -348)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B31</tspan></text></g>
+<circle cx="122" cy="-340" r="5" fill="blue" /><g transform="translate(122 -340)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B33</tspan></text></g>
+<circle cx="-541" cy="-531" r="5" fill="blue" /><g transform="translate(-541 -531)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-J73</tspan></text></g>
+<circle cx="377" cy="88" r="5" fill="blue" /><g transform="translate(377 88)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B46</tspan></text></g>
+<circle cx="92" cy="-331" r="5" fill="blue" /><g transform="translate(92 -331)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B35</tspan></text></g>
+<circle cx="196" cy="-321" r="5" fill="blue" /><g transform="translate(196 -321)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B38</tspan></text></g>
+<circle cx="369" cy="-84" r="5" fill="blue" /><g transform="translate(369 -84)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B43</tspan></text></g>
+<circle cx="1" cy="44" r="5" fill="green" /><g transform="translate(1 44)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-H63</tspan></text></g>
+<circle cx="14" cy="24" r="5" fill="green" /><g transform="translate(14 24)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-A2</tspan></text></g>
+<circle cx="-75" cy="305" r="5" fill="blue" /><g transform="translate(-75 305)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B15</tspan></text></g>
+<circle cx="0" cy="-55" r="5" fill="blue" /><g transform="translate(0 -55)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-E54</tspan></text></g>
+<circle cx="72" cy="26" r="5" fill="blue" /><g transform="translate(72 26)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-F57</tspan></text></g>
+<circle cx="217" cy="735" r="5" fill="blue" /><g transform="translate(217 735)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-J84</tspan></text></g>
+<circle cx="-347" cy="74" r="5" fill="blue" /><g transform="translate(-347 74)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B22</tspan></text></g>
+<circle cx="571" cy="-428" r="5" fill="blue" /><g transform="translate(571 -428)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-J78</tspan></text></g>
+<circle cx="-374" cy="61" r="5" fill="blue" /><g transform="translate(-374 61)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B21</tspan></text></g>
+<circle cx="-359" cy="43" r="5" fill="blue" /><g transform="translate(-359 43)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B23</tspan></text></g>
+<circle cx="723" cy="112" r="5" fill="blue" /><g transform="translate(723 112)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-J82</tspan></text></g>
+<circle cx="-335" cy="-168" r="5" fill="blue" /><g transform="translate(-335 -168)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-B24</tspan></text></g>
+<circle cx="-5" cy="29" r="5" fill="green" /><g transform="translate(-5 29)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-ZF4B</tspan></text></g>
+<circle cx="671" cy="-408" r="5" fill="blue" /><g transform="translate(671 -408)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-J80</tspan></text></g>
+<circle cx="28" cy="770" r="5" fill="blue" /><g transform="translate(28 770)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-J86</tspan></text></g>
+<circle cx="72" cy="26" r="5" fill="blue" /><g transform="translate(72 26)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-F59</tspan></text></g>
+<circle cx="-62" cy="-16" r="5" fill="blue" /><g transform="translate(-62 -16)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-G61</tspan></text></g>
+<circle cx="14" cy="24" r="5" fill="green" /><g transform="translate(14 24)">
+            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
+              <tspan x="0" dy="1.2em">X1-XM43-A3</tspan></text></g>
       <!-- render connections -->
       <line x1="207" y1="231" x2="176" y2="276" stroke="black" />
 <line x1="207" y1="231" x2="133" y2="310" stroke="black" />
@@ -1358,39 +1536,17 @@
 <line x1="14" y1="24" x2="72" y2="26" stroke="black" />
 <line x1="14" y1="24" x2="72" y2="26" stroke="black" />
       <!-- render route -->
-      <line x1="-588" y1="515" x2="-258" y2="295" stroke="red" marker-end="url(#arrow)" />
-<line x1="-258" y1="295" x2="-223" y2="241" stroke="red" marker-end="url(#arrow)" />
-<line x1="-223" y1="241" x2="-22" y2="80" stroke="red" marker-end="url(#arrow)" />
-<line x1="-22" y1="80" x2="7" y2="-103" stroke="red" marker-end="url(#arrow)" />
-<line x1="7" y1="-103" x2="261" y2="-242" stroke="red" marker-end="url(#arrow)" />
-<line x1="261" y1="-242" x2="571" y2="-428" stroke="red" marker-end="url(#arrow)" />
-<line x1="571" y1="-428" x2="219" y2="-276" stroke="red" marker-end="url(#arrow)" />
-<line x1="219" y1="-276" x2="-8" y2="-227" stroke="red" marker-end="url(#arrow)" />
-<line x1="-8" y1="-227" x2="-300" y2="-176" stroke="red" marker-end="url(#arrow)" />
-<line x1="-300" y1="-176" x2="-727" y2="-303" stroke="red" marker-end="url(#arrow)" />
+      <line x1="-62" y1="-16" x2="-22" y2="80" stroke="red" marker-end="url(#arrow)" />
+<line x1="-22" y1="80" x2="-13" y2="356" stroke="red" marker-end="url(#arrow)" />
       <!-- render edge names, weight, and consumption/recovery -->
       
-            <g transform="translate(-423 405)">
+            <g transform="translate(-42 32)">
             <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
               <tspan x="0" dy="1.2em">cruise</tspan>
-              <tspan x="0" dy="1.2em">(E-639)</tspan>
-              <tspan x="0" dy="1.2em"></tspan>
-              <tspan x="0" dy="1.2em">-{"fuel":397}</tspan>
-              <tspan x="0" dy="1.2em">+{}</tspan>
-              <tspan x="0" dy="1.2em"></tspan>
-          <tspan x="0" dy="1.2em"></tspan>
-
-            </text>
-            </g>
-          
-
-            <g transform="translate(-240.5 268)">
-            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
-              <tspan x="0" dy="1.2em">drift</tspan>
-              <tspan x="0" dy="1.2em">(E-1005)</tspan>
-              <tspan x="0" dy="1.2em"></tspan>
-              <tspan x="0" dy="1.2em">-{"fuel":1}</tspan>
-              <tspan x="0" dy="1.2em">+{}</tspan>
+              <tspan x="0" dy="1.2em">(E-201)</tspan>
+              <tspan x="0" dy="1.2em">(R-20)</tspan>
+              <tspan x="0" dy="1.2em">-{"fuel":104}</tspan>
+              <tspan x="0" dy="1.2em">+{"fuel":104}</tspan>
               <tspan x="0" dy="1.2em"></tspan>
           <tspan x="0" dy="1.2em"></tspan>
 
@@ -1398,110 +1554,12 @@
             </g>
           
 
-            <g transform="translate(-122.5 160.5)">
-            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
-              <tspan x="0" dy="1.2em">drift</tspan>
-              <tspan x="0" dy="1.2em">(E-3915)</tspan>
-              <tspan x="0" dy="1.2em">(R-340)</tspan>
-              <tspan x="0" dy="1.2em">-{"fuel":1}</tspan>
-              <tspan x="0" dy="1.2em">+{"fuel":399}</tspan>
-              <tspan x="0" dy="1.2em"></tspan>
-          <tspan x="0" dy="1.2em"></tspan>
-
-            </text>
-            </g>
-          
-
-            <g transform="translate(-7.5 -11.5)">
+            <g transform="translate(-17.5 218)">
             <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
               <tspan x="0" dy="1.2em">cruise</tspan>
-              <tspan x="0" dy="1.2em">(E-321)</tspan>
-              <tspan x="0" dy="1.2em">(R-170)</tspan>
-              <tspan x="0" dy="1.2em">-{"fuel":185}</tspan>
-              <tspan x="0" dy="1.2em">+{"fuel":185}</tspan>
+              <tspan x="0" dy="1.2em">(E-459)</tspan>
               <tspan x="0" dy="1.2em"></tspan>
-          <tspan x="0" dy="1.2em"></tspan>
-
-            </text>
-            </g>
-          
-
-            <g transform="translate(134 -172.5)">
-            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
-              <tspan x="0" dy="1.2em">cruise</tspan>
-              <tspan x="0" dy="1.2em">(E-480)</tspan>
-              <tspan x="0" dy="1.2em"></tspan>
-              <tspan x="0" dy="1.2em">-{"fuel":290}</tspan>
-              <tspan x="0" dy="1.2em">+{}</tspan>
-              <tspan x="0" dy="1.2em"></tspan>
-          <tspan x="0" dy="1.2em"></tspan>
-
-            </text>
-            </g>
-          
-
-            <g transform="translate(416 -335)">
-            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
-              <tspan x="0" dy="1.2em">drift</tspan>
-              <tspan x="0" dy="1.2em">(E-5475)</tspan>
-              <tspan x="0" dy="1.2em"></tspan>
-              <tspan x="0" dy="1.2em">-{"fuel":1}</tspan>
-              <tspan x="0" dy="1.2em">+{}</tspan>
-              <tspan x="0" dy="1.2em"></tspan>
-          <tspan x="0" dy="1.2em"></tspan>
-
-            </text>
-            </g>
-          
-
-            <g transform="translate(395 -352)">
-            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
-              <tspan x="0" dy="1.2em">drift</tspan>
-              <tspan x="0" dy="1.2em">(E-5790)</tspan>
-              <tspan x="0" dy="1.2em"></tspan>
-              <tspan x="0" dy="1.2em">-{"fuel":1}</tspan>
-              <tspan x="0" dy="1.2em">+{}</tspan>
-              <tspan x="0" dy="1.2em"></tspan>
-          <tspan x="0" dy="1.2em"></tspan>
-
-            </text>
-            </g>
-          
-
-            <g transform="translate(105.5 -251.5)">
-            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
-              <tspan x="0" dy="1.2em">drift</tspan>
-              <tspan x="0" dy="1.2em">(E-3525)</tspan>
-              <tspan x="0" dy="1.2em">(R-255)</tspan>
-              <tspan x="0" dy="1.2em">-{"fuel":1}</tspan>
-              <tspan x="0" dy="1.2em">+{"fuel":293}</tspan>
-              <tspan x="0" dy="1.2em"></tspan>
-          <tspan x="0" dy="1.2em"></tspan>
-
-            </text>
-            </g>
-          
-
-            <g transform="translate(-154 -201.5)">
-            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
-              <tspan x="0" dy="1.2em">cruise</tspan>
-              <tspan x="0" dy="1.2em">(E-489)</tspan>
-              <tspan x="0" dy="1.2em"></tspan>
-              <tspan x="0" dy="1.2em">-{"fuel":296}</tspan>
-              <tspan x="0" dy="1.2em">+{}</tspan>
-              <tspan x="0" dy="1.2em"></tspan>
-          <tspan x="0" dy="1.2em"></tspan>
-
-            </text>
-            </g>
-          
-
-            <g transform="translate(-513.5 -239.5)">
-            <text x="0" y="0" font-size="10" fill="red" text-anchor="middle" dominant-baseline="middle">
-              <tspan x="0" dy="1.2em">drift</tspan>
-              <tspan x="0" dy="1.2em">(E-6720)</tspan>
-              <tspan x="0" dy="1.2em"></tspan>
-              <tspan x="0" dy="1.2em">-{"fuel":1}</tspan>
+              <tspan x="0" dy="1.2em">-{"fuel":276}</tspan>
               <tspan x="0" dy="1.2em">+{}</tspan>
               <tspan x="0" dy="1.2em"></tspan>
           <tspan x="0" dy="1.2em"></tspan>

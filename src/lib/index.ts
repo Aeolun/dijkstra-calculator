@@ -86,6 +86,7 @@ export interface LinkedListItem<RESOURCES extends string> {
   consumes?: PartialRecord<RESOURCES, number>;
   recover?: PartialRecord<RESOURCES, number>;
   weight?: number;
+  extraWeight?: number;
   weightFromResources?: number;
   totalConsumed?: PartialRecord<RESOURCES, number>;
   totalRecovered?: PartialRecord<RESOURCES, number>;
@@ -107,6 +108,13 @@ export interface VertexProperties<RESOURCES extends string> {
 export interface EdgeProperties<RESOURCES extends string> {
   id?: string;
   weight: number;
+  extraCost?: (
+    current?: PartialRecord<RESOURCES, number>,
+    max?: PartialRecord<RESOURCES, number>,
+    spent?: PartialRecord<RESOURCES, number>,
+    finalStep: boolean
+  ) => number;
+  extraWeight?: number;
   consumes?: PartialRecord<RESOURCES, number>;
   recover?: PartialRecord<RESOURCES, number>;
   totalConsumed?: PartialRecord<RESOURCES, number>;
@@ -310,10 +318,7 @@ export class DijkstraCalculator<RESOURCES extends string> {
           const nextNode = this.adjacencyList[smallest][neighbor];
           const nextVertexProperties = this.vertexProperties[nextNode.id];
           //calculate new distance to neighboring node
-          let candidate =
-            distances[smallest].priority +
-            nextNode.properties.weight +
-            (this.heuristic ? this.heuristic(nextNode.id, finish) : 0);
+
           const newSupplies: PartialRecord<RESOURCES, number> = {
             ...distances[smallest].supplies,
           };
@@ -336,6 +341,12 @@ export class DijkstraCalculator<RESOURCES extends string> {
               totalConsumed[supply] = (totalConsumed[supply] ?? 0) + consumed;
             }
           }
+
+          let candidate =
+            distances[smallest].priority +
+            nextNode.properties.weight +
+            (this.heuristic ? this.heuristic(nextNode.id, finish) : 0);
+
           // any step with negative supplies is a step we can't take
           for (const supply in newSupplies) {
             const supp = newSupplies[supply];
@@ -378,6 +389,18 @@ export class DijkstraCalculator<RESOURCES extends string> {
               newSupplies[supply] = properties.supplyCapacity?.[supply] ?? 0;
             }
           }
+
+          // custom extra cost for traversing edge
+          const extraWeight = nextNode.properties.extraCost
+            ? nextNode.properties.extraCost(
+                newSupplies,
+                properties.supplyCapacity,
+                nextNode.properties.consumes,
+                nextNode.id === finish
+              )
+            : 0;
+          candidate += extraWeight;
+
           const newProperties: PathProperties<RESOURCES> = {
             supplies: newSupplies,
             priority: candidate,
@@ -415,6 +438,7 @@ export class DijkstraCalculator<RESOURCES extends string> {
               ...nextNode.properties,
               recover: recoverHere,
               weightFromResources,
+              extraWeight,
             };
             //enqueue in priority queue with new priority
             nodes.enqueue(nextNeighbor, newProperties);
@@ -461,6 +485,7 @@ export class DijkstraCalculator<RESOURCES extends string> {
               weightFromResources: finalPath[i + 1].weightFromResources,
               totalConsumed: finalPath[i + 1].totalConsumed,
               totalRecovered: finalPath[i + 1].totalRecovered,
+              extraWeight: finalPath[i + 1].extraWeight,
             }
           : {
               source: finalPath[i].vertexId,
