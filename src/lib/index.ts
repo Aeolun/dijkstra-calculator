@@ -109,9 +109,9 @@ export interface EdgeProperties<RESOURCES extends string> {
   id?: string;
   weight: number;
   extraCost?: (
-    current?: PartialRecord<RESOURCES, number>,
-    max?: PartialRecord<RESOURCES, number>,
-    spent?: PartialRecord<RESOURCES, number>,
+    current: PartialRecord<RESOURCES, number>,
+    max: PartialRecord<RESOURCES, number>,
+    spent: PartialRecord<RESOURCES, number>,
     finalStep: boolean
   ) => number;
   extraWeight?: number;
@@ -394,8 +394,8 @@ export class DijkstraCalculator<RESOURCES extends string> {
           const extraWeight = nextNode.properties.extraCost
             ? nextNode.properties.extraCost(
                 newSupplies,
-                properties.supplyCapacity,
-                nextNode.properties.consumes,
+                properties.supplyCapacity ?? {},
+                nextNode.properties.consumes ?? {},
                 nextNode.id === finish
               )
             : 0;

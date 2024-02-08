@@ -2,7 +2,7 @@ import * as fs from 'fs';
 
 import system from './system.json';
 
-import { DijkstraCalculator, NodeId } from './index';
+import { DijkstraCalculator, EdgeProperties, NodeId } from './index';
 
 interface Waypoint {
   symbol: string;
@@ -208,13 +208,28 @@ system.forEach((waypoint) => {
         ) * creditsPerSecond
       );
     };
-    const extraCost = (supply, max, spent, finalStep) => {
+    const extraCost: EdgeProperties<'fuel'>['extraCost'] = (
+      supply,
+      max,
+      spent,
+      finalStep
+    ) => {
+      const fuelSupply = supply['fuel'];
+      const maxFuel = max['fuel'];
+      const spentFuel = spent['fuel'];
+      if (
+        fuelSupply == undefined ||
+        maxFuel == undefined ||
+        spentFuel === undefined
+      ) {
+        return 0;
+      }
       if (supply && max) {
         if (finalStep) {
-          return 3000 * (1 - supply['fuel'] / max['fuel']);
+          return 3000 * (1 - fuelSupply / maxFuel);
         }
       }
-      return (spent['fuel'] / 100) * 75;
+      return (spentFuel / 100) * 75;
     };
     dijkstra.addEdge(waypoint.symbol, otherWaypoint.symbol, {
       weight: edgeCost(30, 7.5, distance),
