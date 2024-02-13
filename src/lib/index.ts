@@ -87,6 +87,7 @@ export interface LinkedListItem<RESOURCES extends string> {
   recover?: PartialRecord<RESOURCES, number>;
   weight?: number;
   extraWeight?: number;
+  supplies?: PartialRecord<RESOURCES, number>;
   weightFromResources?: number;
   totalConsumed?: PartialRecord<RESOURCES, number>;
   totalRecovered?: PartialRecord<RESOURCES, number>;
@@ -115,6 +116,7 @@ export interface EdgeProperties<RESOURCES extends string> {
     finalStep: boolean
   ) => number;
   extraWeight?: number;
+  supplies?: PartialRecord<RESOURCES, number>;
   consumes?: PartialRecord<RESOURCES, number>;
   recover?: PartialRecord<RESOURCES, number>;
   totalConsumed?: PartialRecord<RESOURCES, number>;
@@ -437,6 +439,7 @@ export class DijkstraCalculator<RESOURCES extends string> {
             previousEdgeId[nextNeighbor] = {
               ...nextNode.properties,
               recover: recoverHere,
+              supplies: newSupplies,
               weightFromResources,
               extraWeight,
             };
@@ -482,6 +485,7 @@ export class DijkstraCalculator<RESOURCES extends string> {
               consumes: finalPath[i + 1].consumes,
               recover: finalPath[i + 1].recover,
               weight: finalPath[i + 1].weight,
+              supplies: finalPath[i + 1].supplies,
               weightFromResources: finalPath[i + 1].weightFromResources,
               totalConsumed: finalPath[i + 1].totalConsumed,
               totalRecovered: finalPath[i + 1].totalRecovered,

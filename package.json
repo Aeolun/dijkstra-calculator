@@ -83,5 +83,8 @@
     "exclude": [
       "**/*.spec.js"
     ]
+  },
+  "dependencies": {
+    "recharts": "^2.11.0"
   }
 }
