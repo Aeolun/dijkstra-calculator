@@ -1,40 +1,55 @@
 ![Dijkstra's Calculator](./banner.jpg)
 
-# A Typescript implementation of Dijkstra's shortest path algorithm
+# A TypeScript implementation of Dijkstra's shortest path algorithm
 
-> @aeolun: This is fairly seriously modified from the original to return the final weight for a route, and take into account a variety of limits like fuel
+> An advanced pathfinding library with resource management, custom cost functions, and A* heuristic support
 
-- **GitHub URL**: https://github.com/getditto/dijkstra-calculator
+- **GitHub URL**: https://github.com/aeolun/dijkstra-calculator
 - **TypeDoc Link**: https://getditto.github.io/dijkstra-calculator
 - Built with [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](http://www.typescriptlang.org/)
 - Continuous Integration Status ![Continuous Integration](https://github.com/getditto/dijkstra-calculator/actions/workflows/ci.yml/badge.svg)
 
-Use this to find the shortest path of nodes in graph using [Dijkstra's algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm). [Learn how to pronounce Dijkstra here](https://www.youtube.com/watch?v=lg6uIPSvclU).
+## Overview
 
-This library a TypeScript port from [Alfred Gatsby @Prottoy2938](https://github.com/Prottoy2938) for the great work done here: https://gist.github.com/Prottoy2938/66849e04b0bac459606059f5f9f3aa1a
+Find the shortest path between nodes in a graph using [Dijkstra's algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm), with support for:
 
-At [Ditto](https://www.ditto.live) we do a lot of imagery with [react-force-graph](https://github.com/vasturiano/react-force-graph) to show how our mesh network can establish virtual connections between peers. This library is used to aid in showing the shortest path between peers. Note: we use a modified version of Dijkstra's Algorithm with differing priority per link as a consideration for our system. This library is primarily used for assisting in simple visualizations in our documentation and blog.
+- 🎯 **Resource management** - Track consumable resources like fuel, energy, or ammunition
+- ⛽ **Resource recovery** - Define refueling/recharging stations at vertices
+- 🔄 **Multiple edge types** - Model different travel modes (walk/drive/fly) between the same nodes
+- 💰 **Dynamic cost functions** - Calculate edge costs based on current state
+- 🚀 **A* heuristic** - Improve performance with custom heuristic functions
+- 🗺️ **Multi-waypoint routing** - Calculate routes through multiple destinations
+
+Originally ported from [Alfred Gatsby @Prottoy2938](https://github.com/Prottoy2938)'s [gist](https://gist.github.com/Prottoy2938/66849e04b0bac459606059f5f9f3aa1a), this library has been significantly extended to support resource-constrained pathfinding.
+
+At [Ditto](https://www.ditto.live), we use this library with [react-force-graph](https://github.com/vasturiano/react-force-graph) to visualize optimal paths in mesh networks with varying link priorities and resource constraints.
+
+[Learn how to pronounce Dijkstra](https://www.youtube.com/watch?v=lg6uIPSvclU)
 
 ## Installation
 
-Use either `npm` or `yarn` to install the library. This library is targeting ES5 and can be run on either Web, Node, or Electron projects. It does not have any dependencies.
-
 ```sh
-npm install dijkstra-calculator
-# or if you're using yarn
-yarn add dijkstra-calculator
+npm install @aeolun/dijkstra-calculator
+# or
+yarn add @aeolun/dijkstra-calculator
+# or
+pnpm add @aeolun/dijkstra-calculator
 ```
 
-## Usage:
+This library targets ES2017 and works in Web, Node, and Electron environments with no runtime dependencies.
 
-Let's say you want to find the shortest path between two nodes in the graph.
-Given a series of Nodes in a graph with identifiers `"A "`to `"F"` and edges established between each one
+## Usage
 
-```js
-import { DijkstraCalculator } from 'dijkstra-calculator';
+### Basic Usage
+
+Find the shortest path between two nodes with uniform edge weights:
+
+```typescript
+import { DijkstraCalculator } from '@aeolun/dijkstra-calculator';
 
 const graph = new DijkstraCalculator();
 
+// Add vertices
 graph.addVertex('A');
 graph.addVertex('B');
 graph.addVertex('C');
@@ -42,6 +57,7 @@ graph.addVertex('D');
 graph.addVertex('E');
 graph.addVertex('F');
 
+// Add edges (default weight: 1)
 graph.addEdge('A', 'B');
 graph.addEdge('A', 'C');
 graph.addEdge('B', 'E');
@@ -51,19 +67,18 @@ graph.addEdge('D', 'E');
 graph.addEdge('D', 'F');
 graph.addEdge('E', 'F');
 
-// Now you can calculate the shortest distance between A and E
-const path = graph.calculateShortestPath('A', 'E');
-// this will print ['A', 'B', 'E']
+const result = graph.calculateShortestPath('A', 'E');
+console.log(result.finalPath); // ['A', 'B', 'E']
+console.log(result.pathProperties.priority); // 2 (total weight)
 ```
 
-### Adding weights to edges
+### Weighted Edges
 
-There are instances where you'd like to add some priority or weight to an edge. The 3rd parameter
+Assign different weights to prioritize certain paths:
 
-```js
-import { DijkstraCalculator } from 'dijkstra-calculator';
-
+```typescript
 const graph = new DijkstraCalculator();
+
 graph.addVertex('A');
 graph.addVertex('B');
 graph.addVertex('C');
@@ -71,44 +86,400 @@ graph.addVertex('D');
 graph.addVertex('E');
 graph.addVertex('F');
 
-graph.addEdge('A', 'B', 4);
-graph.addEdge('A', 'C', 2);
-graph.addEdge('B', 'E', 3);
-graph.addEdge('C', 'D', 2);
-graph.addEdge('C', 'F', 4);
-graph.addEdge('D', 'E', 3);
-graph.addEdge('D', 'F', 1);
-graph.addEdge('E', 'F', 1);
+graph.addEdge('A', 'B', { weight: 4 });
+graph.addEdge('A', 'C', { weight: 2 });
+graph.addEdge('B', 'E', { weight: 3 });
+graph.addEdge('C', 'D', { weight: 2 });
+graph.addEdge('C', 'F', { weight: 4 });
+graph.addEdge('D', 'E', { weight: 3 });
+graph.addEdge('D', 'F', { weight: 1 });
+graph.addEdge('E', 'F', { weight: 1 });
 
-const path = graph.calculateShortestPath('A', 'E');
-// with consideration of the weights at the edge, the values will be ['A', 'C', 'D', 'F', 'E']
+const result = graph.calculateShortestPath('A', 'E');
+console.log(result.finalPath); // ['A', 'C', 'D', 'F', 'E']
+console.log(result.pathProperties.priority); // 6
 ```
 
-### Getting a Linked List instead of a string array
+### Resource Management
 
-Libraries like [d3](https://d3js.org/) or [Vis.js](https://visjs.org/) or [force-graph](https://github.com/vasturiano/react-force-graph/) will want a structure to specify edges that looks something like this:
+Track consumable resources (fuel, energy, health, etc.) and find paths that don't exceed capacity:
 
-```js
-[
-  { source: 'A', target: 'B' },
-  { source: 'C', target: 'D' },
-  // etc...
-];
+```typescript
+// Specify resource types via generic parameter
+const graph = new DijkstraCalculator<'fuel'>();
+
+graph.addVertex('A');
+graph.addVertex('B');
+graph.addVertex('C');
+graph.addVertex('D');
+graph.addVertex('E');
+
+// Each edge consumes resources
+graph.addEdge('A', 'B', { weight: 1, consumes: { fuel: 1 } });
+graph.addEdge('A', 'C', { weight: 1, consumes: { fuel: 1 } });
+graph.addEdge('B', 'D', { weight: 1, consumes: { fuel: 1 } });
+graph.addEdge('B', 'E', { weight: 1, consumes: { fuel: 10 } }); // expensive!
+graph.addEdge('C', 'D', { weight: 1, consumes: { fuel: 1 } });
+graph.addEdge('D', 'E', { weight: 1, consumes: { fuel: 1 } });
+
+const result = graph.calculateShortestPath('A', 'E', {
+  supplies: { fuel: 3 },        // Starting fuel
+  supplyCapacity: { fuel: 3 },  // Maximum fuel capacity
+});
+
+console.log(result.finalPath); // ['A', 'B', 'D', 'E'] - avoids expensive edge
+console.log(result.pathProperties.supplies); // { fuel: 0 } - fuel remaining
 ```
 
-You can get something that fits these APIs by calling `calculateShortestPathAsLinkedListResult` like below:
+When a path would exceed resource capacity, it receives a large penalty (100,000 × deficit), making it non-viable unless no other path exists.
 
-```js
-const linkedList = graph.calculateShortestPathAsLinkedListResult('A', 'E')
-// This will result in `linkedList` with the following contents
-[
-  { source: 'A', target: 'C' },
-  { source: 'C', target: 'D' },
-  { source: 'D', target: 'F' },
-  { source: 'F', target: 'E' },
-];
+### Resource Recovery (Refueling Stations)
+
+Define vertices where resources can be recovered:
+
+```typescript
+const graph = new DijkstraCalculator<'fuel'>();
+
+graph.addVertex('A');
+graph.addVertex('B');
+graph.addVertex('C', {
+  recover: {
+    fuel: (currentLevel, maxCapacity) => {
+      const recoverAmount = maxCapacity - currentLevel;
+      const refuelCost = recoverAmount * 0.5; // cost per unit
+      return {
+        recoverAmount,
+        cost: refuelCost, // added to path priority
+      };
+    },
+  },
+});
+graph.addVertex('D');
+graph.addVertex('E');
+
+graph.addEdge('A', 'B', { weight: 1, consumes: { fuel: 2 } });
+graph.addEdge('A', 'C', { weight: 1, consumes: { fuel: 2 } });
+graph.addEdge('B', 'E', { weight: 1, consumes: { fuel: 2 } });
+graph.addEdge('C', 'D', { weight: 1, consumes: { fuel: 2 } });
+graph.addEdge('D', 'E', { weight: 1, consumes: { fuel: 2 } });
+
+const result = graph.calculateShortestPath('A', 'E', {
+  supplies: { fuel: 4 },
+  supplyCapacity: { fuel: 10 },
+});
+
+// May route through C to refuel if it's more efficient
+console.log(result.pathProperties.totalConsumed); // Total fuel consumed
+console.log(result.pathProperties.totalRecovered); // Total fuel recovered
 ```
 
-## Pronunciation Of Dijkstra
+### Multiple Edge Types
 
-Not sure how to pronounce Dijkstra? https://www.youtube.com/watch?v=lg6uIPSvclU
+Model different travel modes between the same nodes:
+
+```typescript
+const graph = new DijkstraCalculator<'fuel'>();
+
+graph.addVertex('A');
+graph.addVertex('B');
+
+// Walk: slow but fuel-efficient
+graph.addEdge('A', 'B', {
+  id: 'walk',
+  weight: 10,
+  consumes: { fuel: 1 },
+});
+
+// Drive: fast but uses more fuel
+graph.addEdge('A', 'B', {
+  id: 'drive',
+  weight: 3,
+  consumes: { fuel: 5 },
+});
+
+// Fly: fastest but fuel-hungry
+graph.addEdge('A', 'B', {
+  id: 'fly',
+  weight: 1,
+  consumes: { fuel: 10 },
+});
+
+// Low fuel: will choose walk
+const lowFuelResult = graph.calculateShortestPath('A', 'B', {
+  supplies: { fuel: 2 },
+  supplyCapacity: { fuel: 2 },
+});
+
+// High fuel: will choose fly
+const highFuelResult = graph.calculateShortestPath('A', 'B', {
+  supplies: { fuel: 20 },
+  supplyCapacity: { fuel: 20 },
+});
+```
+
+### Dynamic Cost Functions
+
+Calculate edge costs based on current path state:
+
+```typescript
+const graph = new DijkstraCalculator<'fuel'>();
+
+graph.addVertex('A');
+graph.addVertex('B');
+
+graph.addEdge('A', 'B', {
+  weight: 10,
+  consumes: { fuel: 5 },
+  // Add cost based on how much fuel we're using
+  extraCost: (currentSupply, maxSupply, consumedThisEdge, isFinalStep) => {
+    const fuelUsed = consumedThisEdge.fuel ?? 0;
+    const fuelRemaining = currentSupply.fuel ?? 0;
+
+    // Penalize low fuel at destination
+    if (isFinalStep && fuelRemaining < maxSupply.fuel! * 0.2) {
+      return 1000; // large penalty for arriving with <20% fuel
+    }
+
+    // Small cost per fuel unit consumed
+    return fuelUsed * 0.1;
+  },
+});
+```
+
+### A* Heuristic
+
+Improve pathfinding performance with a heuristic function (converts Dijkstra to A*):
+
+```typescript
+// Define 2D positions for nodes
+const positions: Record<string, { x: number; y: number }> = {
+  A: { x: 0, y: 0 },
+  B: { x: 10, y: 5 },
+  C: { x: 20, y: 0 },
+  D: { x: 30, y: 10 },
+};
+
+// Heuristic: Euclidean distance to target
+const graph = new DijkstraCalculator<'fuel'>((currentNode, targetNode) => {
+  const current = positions[currentNode];
+  const target = positions[targetNode];
+  const distance = Math.sqrt(
+    Math.pow(target.x - current.x, 2) +
+    Math.pow(target.y - current.y, 2)
+  );
+  return distance * 0.5; // scale factor
+});
+
+// Add vertices and edges...
+const result = graph.calculateShortestPath('A', 'D', {
+  supplies: { fuel: 100 },
+  supplyCapacity: { fuel: 100 },
+});
+```
+
+The heuristic guides the search toward the target, potentially exploring fewer nodes.
+
+### Multi-Waypoint Routing
+
+Calculate a route through multiple destinations in sequence:
+
+```typescript
+const graph = new DijkstraCalculator<'fuel'>();
+
+// Add vertices and edges...
+
+const result = graph.calculateShortestRouteAsLinkedListResults(
+  ['A', 'C', 'E', 'B'], // visit in this order
+  {
+    supplies: { fuel: 50 },
+    supplyCapacity: { fuel: 50 },
+  }
+);
+
+console.log(result.finalPath); // Complete path through all waypoints
+console.log(result.pathProperties.priority); // Total cost
+console.log(result.pathProperties.timeTaken); // Computation time (ms)
+```
+
+### Linked List Output
+
+For visualization libraries like [d3](https://d3js.org/), [Vis.js](https://visjs.org/), or [force-graph](https://github.com/vasturiano/react-force-graph/), use the linked list format:
+
+```typescript
+const result = graph.calculateShortestPathAsLinkedListResult('A', 'E', {
+  supplies: { fuel: 10 },
+  supplyCapacity: { fuel: 10 },
+});
+
+console.log(result.finalPath);
+// [
+//   {
+//     source: 'A',
+//     target: 'C',
+//     edge: 'drive',
+//     weight: 2,
+//     consumes: { fuel: 1 },
+//     recover: {},
+//     supplies: { fuel: 9 },
+//     totalConsumed: { fuel: 1 },
+//     totalRecovered: { fuel: 0 },
+//   },
+//   // ... more edges
+// ]
+```
+
+Each edge includes:
+- `source`/`target`: Node IDs
+- `edge`: Edge ID (if provided)
+- `weight`: Base edge weight
+- `extraWeight`: Additional cost from `extraCost` function
+- `consumes`: Resources consumed on this edge
+- `recover`: Resources recovered at target vertex
+- `supplies`: Resource levels after this edge
+- `totalConsumed`/`totalRecovered`: Cumulative resource usage
+
+## TypeScript Types
+
+The library is fully typed. Key interfaces:
+
+```typescript
+// Define your resource types
+type MyResources = 'fuel' | 'health' | 'ammo';
+
+// Create a typed graph
+const graph = new DijkstraCalculator<MyResources>();
+
+// Edge configuration
+interface EdgeProperties<RESOURCES extends string> {
+  id?: string;
+  weight: number;
+  consumes?: Partial<Record<RESOURCES, number>>;
+  extraCost?: (
+    currentSupply: Partial<Record<RESOURCES, number>>,
+    maxSupply: Partial<Record<RESOURCES, number>>,
+    consumed: Partial<Record<RESOURCES, number>>,
+    isFinalStep: boolean
+  ) => number;
+}
+
+// Vertex configuration
+interface VertexProperties<RESOURCES extends string> {
+  recover?: Partial<Record<RESOURCES, (
+    currentLevel: number,
+    maxLevel: number
+  ) => {
+    recoverAmount: number;
+    cost: number;
+  }>>;
+}
+
+// Path calculation options
+interface PathProperties<RESOURCES extends string> {
+  supplies?: Partial<Record<RESOURCES, number>>;
+  supplyCapacity?: Partial<Record<RESOURCES, number>>;
+}
+
+// Return type
+interface PathReturnProperties<RESOURCES extends string> {
+  priority: number;      // Total path cost
+  timeTaken: number;     // Calculation time (ms)
+  supplies?: Partial<Record<RESOURCES, number>>;
+  totalConsumed?: Partial<Record<RESOURCES, number>>;
+  totalRecovered?: Partial<Record<RESOURCES, number>>;
+  resourceWeight?: Partial<Record<RESOURCES, number>>; // Cost from recovery
+}
+```
+
+## Real-World Example
+
+A space trading game with fuel management:
+
+```typescript
+const graph = new DijkstraCalculator<'fuel'>((from, to) => {
+  // A* heuristic: straight-line distance
+  return Math.hypot(
+    systems[to].x - systems[from].x,
+    systems[to].y - systems[from].y
+  ) * 0.5;
+}, false); // false = disable debug logging
+
+// Add star systems
+systems.forEach(system => {
+  graph.addVertex(system.id, {
+    recover: system.hasRefueling ? {
+      fuel: (current, max) => {
+        const amount = max - current;
+        return {
+          recoverAmount: amount,
+          cost: amount * system.fuelPrice, // varies by location
+        };
+      }
+    } : undefined,
+  });
+});
+
+// Add travel routes
+systems.forEach(system => {
+  system.neighbors.forEach(neighbor => {
+    const distance = Math.hypot(
+      neighbor.x - system.x,
+      neighbor.y - system.y
+    );
+
+    // Multiple travel speeds
+    graph.addEdge(system.id, neighbor.id, {
+      id: 'cruise',
+      weight: distance * 2,  // time cost
+      consumes: { fuel: distance },
+    });
+
+    graph.addEdge(system.id, neighbor.id, {
+      id: 'burn',
+      weight: distance,      // faster
+      consumes: { fuel: distance * 2 }, // uses more fuel
+      extraCost: (supply, max, spent, finalStep) => {
+        // Penalty for arriving with low fuel
+        if (finalStep && supply.fuel! < max.fuel! * 0.1) {
+          return 5000;
+        }
+        return 0;
+      },
+    });
+  });
+});
+
+const route = graph.calculateShortestPath('Sol', 'Alpha-Centauri', {
+  supplies: { fuel: 500 },
+  supplyCapacity: { fuel: 500 },
+});
+```
+
+## API Reference
+
+### `DijkstraCalculator<RESOURCES extends string>`
+
+#### Constructor
+```typescript
+constructor(
+  heuristic?: (currentNode: NodeId, targetNode: NodeId) => number,
+  isDebugging?: boolean
+)
+```
+
+#### Methods
+
+- `addVertex(id: NodeId, properties?: VertexProperties<RESOURCES>): void`
+- `addEdge(from: NodeId, to: NodeId, properties?: EdgeProperties<RESOURCES>): void`
+- `calculateShortestPath(start: NodeId, end: NodeId, properties?: PathProperties<RESOURCES>): PathResult`
+- `calculateShortestPathAsLinkedListResult(start: NodeId, end: NodeId, properties?: PathProperties<RESOURCES>): LinkedListResult`
+- `calculateShortestRouteAsLinkedListResults(nodes: NodeId[], properties?: PathProperties<RESOURCES>): LinkedListResult`
+
+## License
+
+MIT
+
+## Credits
+
+- Original implementation: [Alfred Gatsby @Prottoy2938](https://github.com/Prottoy2938)
+- Extended by [@aeolun](https://github.com/aeolun) with resource management, recovery mechanics, and advanced features
+- Used in production at [Ditto](https://www.ditto.live)
