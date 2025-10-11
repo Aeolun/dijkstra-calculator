@@ -334,7 +334,7 @@ export class DijkstraCalculator<RESOURCES extends string> {
             ...distances[smallest].resourceWeight,
           };
           let weightFromResources = 0;
-          const recoverHere: Record<string, number> = {};
+          const recoverHere: PartialRecord<RESOURCES, number> = {};
           if (nextNode.properties.consumes) {
             for (const supply in nextNode.properties.consumes) {
               const consumed = nextNode.properties.consumes[supply] ?? 0;
