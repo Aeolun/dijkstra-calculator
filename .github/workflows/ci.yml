@@ -13,6 +13,10 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+permissions:
+  contents: write
+  pull-requests: write
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
@@ -25,6 +29,8 @@ jobs:
       # Checks out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: 'Checkout Repository'
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Required to get all commits for just-release
 
       - uses: pnpm/action-setup@v4
         with:
@@ -39,3 +45,10 @@ jobs:
         run: |
           pnpm install
           pnpm build
+
+      - name: 'Create release PR'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        env:
+          CI: 1
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: pnpm just-release
