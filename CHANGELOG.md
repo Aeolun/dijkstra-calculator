@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.6.0 (2026-01-12)
+
+### Features
+
+- add vertex disable/enable and BFS reachability methods
+
 ## 1.5.0 (2025-11-14)
 
 ### Features
