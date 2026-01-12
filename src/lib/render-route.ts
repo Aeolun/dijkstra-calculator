@@ -1,8 +1,6 @@
-import * as fs from 'fs';
-
+import * as fs from 'node:fs';
+import { DijkstraCalculator, type EdgeProperties, type NodeId } from './index';
 import system from './system.json';
-
-import { DijkstraCalculator, EdgeProperties, NodeId } from './index';
 
 interface Waypoint {
   symbol: string;
@@ -31,7 +29,7 @@ interface Connection {
 function renderRouteSVG(
   waypoints: Waypoint[],
   connections: Connection[],
-  route: Route[]
+  route: Route[],
 ) {
   const svgString = `
     <svg viewBox="-800 -800 1600 1600" xmlns="http://www.w3.org/2000/svg">
@@ -52,10 +50,10 @@ function renderRouteSVG(
       ${connections
         .map((connection) => {
           const source = waypoints.find(
-            (waypoint) => waypoint.symbol === connection.source
+            (waypoint) => waypoint.symbol === connection.source,
           );
           const target = waypoints.find(
-            (waypoint) => waypoint.symbol === connection.target
+            (waypoint) => waypoint.symbol === connection.target,
           );
           if (!source || !target) {
             return '';
@@ -67,10 +65,10 @@ function renderRouteSVG(
       ${route
         .map((route) => {
           const source = waypoints.find(
-            (waypoint) => waypoint.symbol === route.source
+            (waypoint) => waypoint.symbol === route.source,
           );
           const target = waypoints.find(
-            (waypoint) => waypoint.symbol === route.target
+            (waypoint) => waypoint.symbol === route.target,
           );
           if (!source || !target) {
             return '';
@@ -82,10 +80,10 @@ function renderRouteSVG(
       ${route
         .map((route) => {
           const source = waypoints.find(
-            (waypoint) => waypoint.symbol === route.source
+            (waypoint) => waypoint.symbol === route.source,
           );
           const target = waypoints.find(
-            (waypoint) => waypoint.symbol === route.target
+            (waypoint) => waypoint.symbol === route.target,
           );
           if (!source || !target) {
             return '';
@@ -132,9 +130,9 @@ function renderRouteSVG(
 
 const getDistance = (
   a: { x: number; y: number },
-  b: { x: number; y: number }
+  b: { x: number; y: number },
 ) => {
-  return Math.round(Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2)));
+  return Math.round(Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2));
 };
 
 const waypointPositions: Record<string, { x: number; y: number }> = {};
@@ -149,10 +147,10 @@ const connections: Connection[] = [];
 const dijkstra = new DijkstraCalculator((vertex, target) => {
   const distance = getDistance(
     waypointPositions[vertex],
-    waypointPositions[target]
+    waypointPositions[target],
   );
   return distance;
-}, false);
+});
 system.forEach((waypoint) => {
   dijkstra.addVertex(waypoint.symbol, {
     recover: waypoint.fuel
@@ -185,7 +183,7 @@ system.forEach((waypoint) => {
     .filter(
       (otherWaypoint) =>
         otherWaypoint.symbol !== waypoint.symbol &&
-        !waypointsWithin100.find((wp) => wp.symbol === otherWaypoint.symbol)
+        !waypointsWithin100.find((wp) => wp.symbol === otherWaypoint.symbol),
     )
     .sort((a, b) => {
       const aDistance = getDistance(waypoint, a);
@@ -204,7 +202,7 @@ system.forEach((waypoint) => {
     const edgeCost = (speed: number, multiplier: number, distance: number) => {
       return (
         Math.floor(
-          Math.round(Math.max(distance, 1)) * (multiplier / speed) + 15
+          Math.round(Math.max(distance, 1)) * (multiplier / speed) + 15,
         ) * creditsPerSecond
       );
     };
@@ -212,14 +210,14 @@ system.forEach((waypoint) => {
       supply,
       max,
       spent,
-      finalStep
+      finalStep,
     ) => {
-      const fuelSupply = supply['fuel'];
-      const maxFuel = max['fuel'];
-      const spentFuel = spent['fuel'];
+      const fuelSupply = supply.fuel;
+      const maxFuel = max.fuel;
+      const spentFuel = spent.fuel;
       if (
-        fuelSupply == undefined ||
-        maxFuel == undefined ||
+        fuelSupply === undefined ||
+        maxFuel === undefined ||
         spentFuel === undefined
       ) {
         return 0;
@@ -268,7 +266,7 @@ const route = dijkstra.calculateShortestPathAsLinkedListResult(
     supplyCapacity: {
       fuel: 600,
     },
-  }
+  },
 );
 console.log(
   'final cost',
@@ -276,7 +274,7 @@ console.log(
   {
     properties: route.pathProperties,
   },
-  route.finalPath
+  route.finalPath,
 );
 
 const svg = renderRouteSVG(system, connections, route.finalPath);

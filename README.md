@@ -24,6 +24,8 @@ Originally ported from [Alfred Gatsby @Prottoy2938](https://github.com/Prottoy29
 
 At [Ditto](https://www.ditto.live), we use this library with [react-force-graph](https://github.com/vasturiano/react-force-graph) to visualize optimal paths in mesh networks with varying link priorities and resource constraints.
 
+**Scale**: This library is battle-tested on massive graphs with 7,000-350,000 nodes (depending on granularity) and multiple travel modes between each pair of nodes. For graphs of this size, using proper A* heuristics is essential to make pathfinding tractable.
+
 [Learn how to pronounce Dijkstra](https://www.youtube.com/watch?v=lg6uIPSvclU)
 
 ## Installation
@@ -36,7 +38,7 @@ yarn add @aeolun/dijkstra-calculator
 pnpm add @aeolun/dijkstra-calculator
 ```
 
-This library targets ES2017 and works in Web, Node, and Electron environments with no runtime dependencies.
+This library targets ES2017 and works in Web, Node, and Electron environments with **zero runtime dependencies**.
 
 ## Usage
 
@@ -279,6 +281,30 @@ const result = graph.calculateShortestPath('A', 'D', {
 
 The heuristic guides the search toward the target, potentially exploring fewer nodes.
 
+### Optional Debug Logging
+
+By default, the library is completely silent with no logging overhead. For debugging, you can optionally provide a logger:
+
+```typescript
+import { DijkstraCalculator, type Logger } from '@aeolun/dijkstra-calculator';
+import pino from 'pino'; // optional dependency
+
+// With Pino (or any compatible logger)
+const logger = pino({ level: 'debug' });
+const graph = new DijkstraCalculator<'fuel'>(undefined, logger);
+
+// With custom logger
+const consoleLogger: Logger = {
+  debug: (msg, ...args) => console.log('[DEBUG]', msg, ...args),
+};
+const graph2 = new DijkstraCalculator<'fuel'>(undefined, consoleLogger);
+
+// Without logger (default - zero overhead)
+const graph3 = new DijkstraCalculator<'fuel'>();
+```
+
+The `Logger` interface is compatible with [Pino](https://github.com/pinojs/pino), [Winston](https://github.com/winstonjs/winston), and most other logging libraries.
+
 ### Multi-Waypoint Routing
 
 Calculate a route through multiple destinations in sequence:
@@ -377,6 +403,7 @@ interface VertexProperties<RESOURCES extends string> {
 interface PathProperties<RESOURCES extends string> {
   supplies?: Partial<Record<RESOURCES, number>>;
   supplyCapacity?: Partial<Record<RESOURCES, number>>;
+  timeout?: number;         // Maximum time in ms before aborting
 }
 
 // Return type
@@ -401,7 +428,7 @@ const graph = new DijkstraCalculator<'fuel'>((from, to) => {
     systems[to].x - systems[from].x,
     systems[to].y - systems[from].y
   ) * 0.5;
-}, false); // false = disable debug logging
+});
 
 // Add star systems
 systems.forEach(system => {
@@ -454,6 +481,167 @@ const route = graph.calculateShortestPath('Sol', 'Alpha-Centauri', {
 });
 ```
 
+## Performance Tips
+
+For large graphs (>1,000 nodes), performance optimization becomes critical:
+
+### 1. **Use A* Heuristics (Essential for Large Graphs)**
+
+For graphs with spatial properties, A* heuristics are **mandatory** for reasonable performance. On graphs with 100,000+ nodes, a good heuristic can reduce pathfinding time from minutes to milliseconds.
+
+```typescript
+// Without heuristic: explores most of the graph
+const slowGraph = new DijkstraCalculator<'fuel'>();
+
+// With heuristic: guided search, explores only relevant nodes
+const fastGraph = new DijkstraCalculator<'fuel'>((current, target) => {
+  const dx = positions[target].x - positions[current].x;
+  const dy = positions[target].y - positions[current].y;
+  return Math.sqrt(dx * dx + dy * dy);
+});
+```
+
+**Heuristic requirements**:
+- Must be **admissible** (never overestimate the true cost)
+- Should be **consistent** (satisfy triangle inequality)
+- Euclidean distance works well for spatial graphs
+- For non-spatial graphs, try domain-specific distance metrics
+
+### 2. **Pre-compute Graph Structure**
+
+If running multiple queries on the same graph, build it once:
+
+```typescript
+// Build graph once
+const graph = new DijkstraCalculator<'fuel'>(heuristic);
+for (const node of nodes) {
+  graph.addVertex(node.id);
+}
+for (const edge of edges) {
+  graph.addEdge(edge.from, edge.to, edge.properties);
+}
+
+// Run multiple queries efficiently
+const route1 = graph.calculateShortestPath('A', 'B', props);
+const route2 = graph.calculateShortestPath('C', 'D', props);
+```
+
+### 3. **Optimize Resource Calculations**
+
+For graphs with many resources, minimize computation in hot paths:
+
+```typescript
+// Avoid expensive calculations in extraCost
+graph.addEdge('A', 'B', {
+  weight: 10,
+  extraCost: (supply, max, consumed, finalStep) => {
+    // BAD: Complex math in hot path
+    // return Math.pow(consumed.fuel, 2) * Math.sin(supply.fuel);
+
+    // GOOD: Simple arithmetic
+    return consumed.fuel * 0.1;
+  },
+});
+```
+
+### 4. **Use Directed Edges When Possible**
+
+If your graph has one-way connections, use directed edges to reduce memory:
+
+```typescript
+// Bidirectional (default) - creates 2 edges
+graph.addEdge('A', 'B', { weight: 1 });
+
+// Directed - creates 1 edge
+graph.addEdge('A', 'B', { weight: 1 }, true);
+```
+
+### 5. **Use Timeouts for Long-Distance Queries**
+
+For very large graphs (100,000+ nodes), some queries across the entire graph may take too long. Use timeouts to prevent hanging:
+
+```typescript
+const result = graph.calculateShortestPath('EarthSystem', 'FarGalaxy', {
+  supplies: { fuel: 1000 },
+  supplyCapacity: { fuel: 1000 },
+  timeout: 500, // Abort after 500ms if no path found
+});
+
+if (result.finalPath.length === 0) {
+  console.log('No path found within timeout - systems too far apart');
+} else {
+  console.log(`Path found in ${result.pathProperties.timeTaken}ms`);
+}
+```
+
+**Timeout guidelines**:
+- For graphs with good heuristics: 100-500ms is usually sufficient
+- Without heuristics: may need 1000ms+ for large graphs
+- Empty result (`finalPath: []`) indicates timeout or no path exists
+
+### 6. **Use Bidirectional Search (For Graphs Without Resources)**
+
+For very large graphs with good heuristics and **without resource constraints**, use `calculateBidirectionalPath()` which searches from both start and end simultaneously:
+
+```typescript
+// Create graph with heuristic (required for bidirectional search)
+const graph = new DijkstraCalculator((from, to) => {
+  return Math.hypot(
+    positions[to].x - positions[from].x,
+    positions[to].y - positions[from].y
+  );
+});
+
+// Add vertices and edges WITHOUT resource consumption
+systems.forEach(system => {
+  graph.addVertex(system.id);
+});
+
+systems.forEach(system => {
+  system.neighbors.forEach(neighbor => {
+    graph.addEdge(system.id, neighbor.id, {
+      weight: calculateDistance(system, neighbor),
+      // NO consumes, NO supplies
+    });
+  });
+});
+
+// Use bidirectional search for fast pathfinding
+const result = graph.calculateBidirectionalPath('EarthSystem', 'AlphaCentauri', {
+  timeout: 500, // Optional timeout in ms
+});
+
+console.log(result.finalPath); // ['EarthSystem', ..., 'AlphaCentauri']
+console.log(result.pathProperties.priority); // Total cost
+```
+
+**Important limitations**:
+- **Does NOT support resource management** (fuel, supplies, etc.)
+- Requires a heuristic function (will throw error if not provided)
+- For graphs with resources, you must use the standard `calculateShortestPath()` methods
+
+**When to use**:
+- Very large graphs (50,000+ nodes) with good heuristics
+- Long-distance queries where standard A* is too slow
+- **Graphs without resource constraints**
+- Simple weight-only pathfinding at scale
+
+### 7. **Profile Large Graphs**
+
+For graphs with 10,000+ nodes, check timing to identify bottlenecks:
+
+```typescript
+const result = graph.calculateShortestPath('A', 'Z', props);
+console.log(`Pathfinding took ${result.pathProperties.timeTaken}ms`);
+
+// If slow:
+// - Verify heuristic is working (should see <100ms for most queries)
+// - Check if recovery functions are too complex
+// - Consider reducing graph granularity if possible
+// - Try bidirectional search for long-distance queries
+// - Add a timeout to prevent UI hangs
+```
+
 ## API Reference
 
 ### `DijkstraCalculator<RESOURCES extends string>`
@@ -462,17 +650,18 @@ const route = graph.calculateShortestPath('Sol', 'Alpha-Centauri', {
 ```typescript
 constructor(
   heuristic?: (currentNode: NodeId, targetNode: NodeId) => number,
-  isDebugging?: boolean
+  logger?: Logger  // optional, defaults to no-op
 )
 ```
 
 #### Methods
 
 - `addVertex(id: NodeId, properties?: VertexProperties<RESOURCES>): void`
-- `addEdge(from: NodeId, to: NodeId, properties?: EdgeProperties<RESOURCES>): void`
+- `addEdge(from: NodeId, to: NodeId, properties?: EdgeProperties<RESOURCES>, directed?: boolean): void`
 - `calculateShortestPath(start: NodeId, end: NodeId, properties?: PathProperties<RESOURCES>): PathResult`
 - `calculateShortestPathAsLinkedListResult(start: NodeId, end: NodeId, properties?: PathProperties<RESOURCES>): LinkedListResult`
 - `calculateShortestRouteAsLinkedListResults(nodes: NodeId[], properties?: PathProperties<RESOURCES>): LinkedListResult`
+- `calculateBidirectionalPath(start: NodeId, end: NodeId, options?: { timeout?: number }): { finalPath: string[]; pathProperties: { priority: number; timeTaken: number } }` - For graphs without resource constraints only
 
 ## License
 
